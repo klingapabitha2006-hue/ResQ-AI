@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ResQ AI | Secure Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255,70,70,.15), transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(40,120,255,.15), transparent 30%),
+                #07101c;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 1050px;
+            min-height: 620px;
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            background: rgba(13,25,42,.92);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,.45);
+        }
+
+        .hero {
+            padding: 55px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background:
+                linear-gradient(rgba(5,14,25,.72), rgba(5,14,25,.9)),
+                radial-gradient(circle at center, #263f60, #07101c);
+        }
+
+        .logo {
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .logo span {
+            color: #ff4d4d;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            color: #a9bbd0;
+            font-size: 17px;
+            line-height: 1.7;
+            max-width: 520px;
+        }
+
+        .features {
+            margin-top: 35px;
+            display: grid;
+            gap: 15px;
+        }
+
+        .feature {
+            padding: 15px 18px;
+            border-radius: 14px;
+            background: rgba(255,255,255,.05);
+            color: #dce7f3;
+        }
+
+        .login-panel {
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: rgba(7,17,30,.97);
+        }
+
+        .login-panel h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #8ea3bb;
+            margin-bottom: 28px;
+        }
+
+        .role-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .role-btn {
+            border: 1px solid #26384d;
+            background: #101d2d;
+            color: #9fb1c5;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .role-btn.active {
+            border-color: #ff4d4d;
+            background: rgba(255,77,77,.12);
+            color: white;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd8e6;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 11px;
+            border: 1px solid #293b50;
+            background: #0d1928;
+            color: white;
+            outline: none;
+            margin-bottom: 18px;
+        }
+
+        input:focus {
+            border-color: #ff4d4d;
+        }
+
+        .login-btn {
+            width: 100%;
+            border: 0;
+            padding: 16px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ff4d4d, #ff6b45);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        #loginMessage {
+            min-height: 25px;
+            margin-top: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .demo {
+            margin-top: 25px;
+            padding: 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.04);
+            color: #91a5bb;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media(max-width: 800px) {
+            .login-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                display: none;
+            }
+
+            .login-panel {
+                min-height: 600px;
+            }
+        }
+        /* ===== LOGIN PAGE SIZE UPGRADE ===== */
+
+.login-container {
+    max-width: 1150px;
+    min-height: 680px;
+}
+
+.login-panel {
+    padding: 60px 50px;
+}
+
+.logo {
+    font-size: 50px;
+}
+
+.login-panel h2 {
+    font-size: 34px;
+}
+
+.role-btn {
+    padding: 18px;
+    font-size: 15px;
+}
+
+input {
+    padding: 17px;
+    font-size: 15px;
+}
+
+.login-btn {
+    padding: 18px;
+    font-size: 17px;
+}
+
+.feature {
+    padding: 18px 20px;
+    font-size: 16px;
+}
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="hero">
+        <div class="logo">🚨 ResQ <span>AI</span></div>
+
+        <h1>Rescue First.<br>Intelligent Response.</h1>
+
+        <p>
+            AI-powered disaster response platform that analyzes
+            emergencies, weather, affected population and location
+            to support faster rescue decisions.
+        </p>
+
+        <div class="features">
+            <div class="feature">⚡ AI Rescue Priority</div>
+            <div class="feature">🗺 Real-Time Disaster Intelligence</div>
+            <div class="feature">🌦 Live Weather Monitoring</div>
+            <div class="feature">🏥 Emergency Medical Support</div>
+        </div>
+    </div>
+
+    <div class="login-panel">
+
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Access the ResQ AI platform</p>
+
+        <div class="role-selector">
+
+            <button
+                type="button"
+                class="role-btn active"
+                id="peopleRole"
+                onclick="selectRole('PEOPLE')">
+                👤 People
+            </button>
+
+            <button
+                type="button"
+                class="role-btn"
+                id="adminRole"
+                onclick="selectRole('ADMIN')">
+                🚑 Admin
+            </button>
+
+        </div>
+
+        <form id="loginForm">
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <button class="login-btn" type="submit">
+                Sign In →
+            </button>
+
+            <div id="loginMessage"></div>
+
+        </form>
+
+    
+
+    </div>
+
+</div>
+
+<script>
+
+const API = "http://127.0.0.1:8001";
+
+let selectedRole = "PEOPLE";
+
+function selectRole(role) {
+
+    selectedRole = role;
+
+    document
+        .getElementById("peopleRole")
+        .classList.toggle("active", role === "PEOPLE");
+
+    document
+        .getElementById("adminRole")
+        .classList.toggle("active", role === "ADMIN");
+}
+
+
+document
+    .getElementById("loginForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const email =
+            document.getElementById("email").value.trim();
+
+        const password =
+            document.getElementById("password").value;
+
+        const message =
+            document.getElementById("loginMessage");
+
+        message.style.color = "#9fb2c8";
+        message.textContent = "Checking login...";
+
+        try {
+
+            const response = await fetch(
+                `${API}/api/login`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        role: selectedRole
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+
+                message.style.color = "#39d98a";
+                message.textContent = "✓ Login successful";
+
+                localStorage.setItem(
+                    "resqUser",
+                    JSON.stringify(data.user)
+                );
+
+                setTimeout(() => {
+
+                    if (data.user.role === "PEOPLE") {
+                        window.location.href = "people.html";
+                    }
+
+                    if (data.user.role === "ADMIN") {
+                        window.location.href = "index.html";
+                    }
+
+                }, 500);
+
+            } else {
+
+                message.style.color = "#ff6259";
+                message.textContent =
+                    "✕ " + data.message;
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            message.style.color = "#ff6259";
+            message.textContent =
+                "✕ Cannot connect to ResQ AI server.";
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

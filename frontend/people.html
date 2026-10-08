@@ -1,0 +1,6033 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>ResQ AI - Emergency Assistance</title>
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #17325c,
+            #07111f 42%,
+            #030914 100%
+        );
+
+    color:#fff;
+
+    min-height:100vh;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(0,160,255,.05),
+            transparent 40%,
+            rgba(0,255,180,.04)
+        );
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:18px 5%;
+
+    background:
+        rgba(5,14,28,.94);
+
+    backdrop-filter:blur(20px);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-icon{
+    width:46px;
+    height:46px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00a8ff,
+            #0067ff
+        );
+
+    font-size:23px;
+}
+
+.brand strong{
+    display:block;
+    font-size:20px;
+}
+
+.brand span{
+    display:block;
+    font-size:11px;
+    color:#87a0b9;
+    margin-top:2px;
+}
+
+.user-area{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.user-name{
+    color:#d9e6f5;
+    font-size:14px;
+}
+
+.logout-btn{
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.05);
+
+    color:#fff;
+
+    padding:10px 15px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container{
+    width:min(1280px,92%);
+    margin:0 auto;
+    padding:45px 0 80px;
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero{
+    padding:38px;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(12,35,66,.95),
+            rgba(5,18,34,.92)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    margin-bottom:24px;
+}
+
+.eyebrow{
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:2px;
+    color:#45b8ff;
+}
+
+.hero h1{
+    margin-top:10px;
+
+    font-size:
+        clamp(
+            32px,
+            5vw,
+            52px
+        );
+
+    line-height:1.05;
+}
+
+.hero p{
+    max-width:760px;
+    margin-top:14px;
+
+    color:#96abc0;
+
+    line-height:1.7;
+}
+
+.status{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+
+    margin-top:22px;
+
+    padding:11px 15px;
+
+    border-radius:999px;
+
+    background:
+        rgba(23,201,100,.10);
+
+    border:
+        1px solid
+        rgba(23,201,100,.22);
+
+    color:#6ee7a8;
+
+    font-size:13px;
+}
+
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.main-grid{
+    display:grid;
+
+    grid-template-columns:
+        1.1fr
+        .9fr;
+
+    gap:22px;
+}
+
+.card{
+    min-width:0;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,35,58,.92),
+            rgba(8,19,34,.96)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:22px;
+
+    padding:26px;
+}
+
+.card-header{
+    margin-bottom:22px;
+}
+
+.card-header h2{
+    margin-top:7px;
+    font-size:22px;
+}
+
+.card-header p{
+    margin-top:8px;
+    color:#8094aa;
+    font-size:13px;
+    line-height:1.6;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.form-group{
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+
+    font-size:12px;
+    font-weight:700;
+
+    color:#c2d0df;
+
+    margin-bottom:8px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+
+    padding:14px 15px;
+
+    border-radius:13px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:#fff;
+
+    outline:none;
+
+    font-size:14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:
+        rgba(0,180,255,.60);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0,180,255,.08);
+}
+
+select option{
+    background:#102137;
+    color:#fff;
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+.location-search-row{
+    display:flex;
+    gap:10px;
+}
+
+.location-search-row input{
+    flex:1;
+}
+
+.location-btn{
+    white-space:nowrap;
+
+    border:none;
+
+    border-radius:13px;
+
+    padding:0 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1597ff,
+            #0068ff
+        );
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:800;
+}
+
+.gps-btn{
+    margin-top:9px;
+
+    width:100%;
+
+    padding:11px;
+
+    border:
+        1px solid
+        rgba(0,180,255,.25);
+
+    background:
+        rgba(0,150,255,.08);
+
+    color:#7dd3fc;
+
+    border-radius:11px;
+
+    cursor:pointer;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+.location-status{
+    margin-top:9px;
+
+    color:#7dd3fc;
+
+    font-size:12px;
+
+    min-height:20px;
+
+    line-height:1.5;
+}
+
+.submit-btn{
+    width:100%;
+
+    margin-top:7px;
+
+    padding:17px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff4757,
+            #e7193f
+        );
+
+    color:#fff;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+.submit-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+#reportResult{
+    margin-top:15px;
+
+    min-height:20px;
+
+    font-size:13px;
+
+    line-height:1.6;
+}
+
+.success{
+    color:#65e7a6;
+}
+
+.error{
+    color:#ff6978;
+}
+
+.priority-box{
+    margin-top:15px;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.04);
+}
+
+.priority-score{
+    font-size:32px;
+    font-weight:900;
+}
+
+.priority-level{
+    margin-top:5px;
+
+    color:#8eeeff;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    letter-spacing:1px;
+}
+
+
+/* =====================================================
+   MAP
+===================================================== */
+
+.map-wrapper{
+    width:100%;
+    height:430px;
+
+    overflow:hidden;
+
+    border-radius:18px;
+
+    background:#081526;
+}
+
+#map{
+    width:100%;
+    height:100%;
+    min-height:430px;
+}
+
+.map-info{
+    margin-top:14px;
+
+    padding:13px 15px;
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    color:#91a6bb;
+
+    font-size:13px;
+
+    line-height:1.5;
+}
+
+
+/* =====================================================
+   WEATHER
+===================================================== */
+
+.weather-location{
+    padding:14px 16px;
+
+    margin-bottom:16px;
+
+    border-radius:14px;
+
+    background:
+        rgba(0,157,255,.07);
+
+    border:
+        1px solid
+        rgba(0,157,255,.14);
+
+    color:#9ddcff;
+
+    font-size:13px;
+
+    line-height:1.5;
+}
+
+.weather-grid{
+    display:grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap:15px;
+}
+
+.weather-item{
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:17px;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(52,128,190,.13),
+            rgba(255,255,255,.035)
+        );
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+}
+
+.weather-icon{
+    width:52px;
+    height:52px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.07);
+
+    font-size:25px;
+}
+
+.weather-content span{
+    display:block;
+
+    font-size:10px;
+
+    letter-spacing:1.3px;
+
+    color:#72879d;
+
+    font-weight:700;
+}
+
+.weather-content strong{
+    display:block;
+
+    margin-top:5px;
+
+    font-size:21px;
+}
+
+.weather-update{
+    margin-top:15px;
+    text-align:right;
+}
+
+.small-btn{
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    background:
+        rgba(255,255,255,.04);
+
+    color:#b7c9da;
+
+    padding:9px 13px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   HOSPITAL LIST
+===================================================== */
+
+.hospital-count{
+    margin-bottom:12px;
+
+    color:#7dd3fc;
+
+    font-size:12px;
+}
+
+.hospital-list{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    max-height:360px;
+
+    overflow-y:auto;
+}
+
+.hospital-card{
+    padding:15px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.hospital-card:hover{
+    border-color:
+        rgba(0,200,255,.35);
+
+    transform:translateY(-1px);
+}
+
+.hospital-card-name{
+    font-size:15px;
+    font-weight:800;
+}
+
+.hospital-card-distance{
+    margin-top:5px;
+
+    color:#65d7ff;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+.hospital-card-address{
+    margin-top:6px;
+
+    color:#8398ad;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+.no-hospital{
+    padding:16px;
+
+    color:#9aafc1;
+
+    font-size:13px;
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.04);
+}
+
+
+/* =====================================================
+   ALERTS
+===================================================== */
+
+.alerts{
+    margin-top:16px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    max-height:300px;
+
+    overflow-y:auto;
+}
+
+.alert-item{
+    padding:14px;
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    border-left:
+        3px solid
+        #35d58b;
+}
+
+.alert-item.high{
+    border-left-color:#ff4055;
+}
+
+.alert-item.medium{
+    border-left-color:#f4bd42;
+}
+
+.alert-item.low{
+    border-left-color:#35d58b;
+}
+
+.alert-title{
+    font-weight:800;
+    font-size:14px;
+}
+
+.alert-message{
+    margin-top:6px;
+
+    color:#9aafc1;
+
+    font-size:12px;
+
+    line-height:1.5;
+}
+
+.alert-time{
+    margin-top:7px;
+
+    color:#62788f;
+
+    font-size:10px;
+}
+
+.full-width{
+    grid-column:1 / -1;
+}
+
+
+/* =====================================================
+   HOLOGRAM COPILOT
+===================================================== */
+
+.people-copilot{
+    position:fixed;
+
+    right:24px;
+
+    bottom:24px;
+
+    width:min(
+        390px,
+        calc(100vw - 32px)
+    );
+
+    z-index:3000;
+
+    border:
+        1px solid
+        rgba(0,255,220,.24);
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 10%,
+            rgba(0,255,220,.12),
+            transparent 35%
+        ),
+        rgba(3,11,22,.97);
+
+    box-shadow:
+        0 18px 55px
+        rgba(0,0,0,.48),
+
+        0 0 35px
+        rgba(0,255,220,.10);
+
+    backdrop-filter:blur(18px);
+}
+
+.people-copilot.collapsed{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+}
+
+.people-copilot.collapsed
+.people-copilot-content{
+    display:none;
+}
+
+.people-copilot-toggle{
+    width:70px;
+    height:70px;
+
+    border:0;
+
+    background:transparent;
+
+    color:#7bffeb;
+
+    font-size:30px;
+
+    cursor:pointer;
+}
+
+.people-copilot-content{
+    padding:16px;
+}
+
+.people-copilot-title{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+}
+
+.people-copilot-title strong{
+    font-size:16px;
+    color:#fff;
+}
+
+.people-copilot-status{
+    color:#54ffe5;
+
+    font-size:9px;
+
+    font-weight:900;
+
+    letter-spacing:1.4px;
+}
+
+.people-copilot-close{
+    border:
+        1px solid
+        rgba(0,255,220,.20);
+
+    background:
+        rgba(0,255,220,.06);
+
+    color:#72ffeb;
+
+    width:34px;
+    height:34px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:20px;
+}
+
+.people-holo-area{
+    height:175px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+.people-holo{
+    position:relative;
+
+    width:140px;
+    height:160px;
+
+    animation:
+        peopleHoloFloat
+        3s
+        ease-in-out
+        infinite;
+
+    filter:
+        drop-shadow(
+            0 0 9px
+            rgba(0,255,230,.95)
+        )
+
+        drop-shadow(
+            0 0 24px
+            rgba(0,170,255,.55)
+        );
+
+    cursor:pointer;
+}
+
+.people-holo-head{
+    position:absolute;
+
+    top:4px;
+    left:49px;
+
+    width:43px;
+    height:50px;
+
+    border-radius:48%;
+
+    background:
+        radial-gradient(
+            circle at 35% 25%,
+            rgba(235,255,252,.95),
+            rgba(50,255,230,.65) 20%,
+            rgba(0,95,170,.32) 70%
+        );
+
+    border:
+        1px solid
+        rgba(150,255,245,.85);
+}
+
+.people-holo-body{
+    position:absolute;
+
+    top:54px;
+    left:27px;
+
+    width:85px;
+    height:90px;
+
+    border-radius:
+        40px
+        40px
+        18px
+        18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(70,255,240,.46),
+            rgba(0,125,210,.22),
+            rgba(0,30,70,.10)
+        );
+
+    border:
+        1px solid
+        rgba(110,255,242,.70);
+}
+
+.people-holo-eye{
+    position:absolute;
+
+    top:27px;
+
+    width:5px;
+    height:3px;
+
+    border-radius:50%;
+
+    background:#ddfff8;
+
+    box-shadow:
+        0 0 8px
+        #00ffe0;
+
+    z-index:5;
+}
+
+.people-holo-eye.left{
+    left:61px;
+}
+
+.people-holo-eye.right{
+    left:83px;
+}
+
+.people-holo-scan{
+    position:absolute;
+
+    top:27px;
+    left:46px;
+
+    width:52px;
+    height:2px;
+
+    background:
+        rgba(140,255,248,.9);
+
+    box-shadow:
+        0 0 8px
+        #00ffe0;
+
+    animation:
+        peopleFaceScan
+        1.8s
+        linear
+        infinite;
+
+    z-index:6;
+}
+
+.people-holo-light{
+    position:absolute;
+
+    top:78px;
+    left:58px;
+
+    width:25px;
+    height:25px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            #eafffb,
+            #35ffe4 25%,
+            #008fc5 58%,
+            transparent 72%
+        );
+
+    box-shadow:
+        0 0 14px
+        #00ffe0;
+
+    z-index:5;
+}
+
+.people-holo-base{
+    position:absolute;
+
+    bottom:1px;
+    left:20px;
+
+    width:100px;
+    height:14px;
+
+    border-radius:50%;
+
+    border:
+        1px solid
+        rgba(0,255,230,.62);
+
+    box-shadow:
+        0 0 15px
+        rgba(0,255,230,.42);
+}
+
+.people-holo.speaking{
+    filter:
+        drop-shadow(
+            0 0 16px
+            rgba(0,255,230,1)
+        )
+
+        drop-shadow(
+            0 0 35px
+            rgba(0,170,255,.85)
+        );
+}
+
+@keyframes peopleHoloFloat{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-7px);
+    }
+}
+
+@keyframes peopleFaceScan{
+
+    0%{
+        transform:translateY(-13px);
+        opacity:0;
+    }
+
+    20%{
+        opacity:1;
+    }
+
+    80%{
+        opacity:1;
+    }
+
+    100%{
+        transform:translateY(15px);
+        opacity:0;
+    }
+}
+
+.people-copilot-response{
+    min-height:95px;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    border-radius:13px;
+
+    background:
+        rgba(0,255,220,.035);
+
+    border:
+        1px solid
+        rgba(0,255,220,.10);
+
+    color:#dff9f5;
+
+    font-size:12px;
+
+    line-height:1.55;
+
+    white-space:pre-line;
+
+    max-height:190px;
+
+    overflow-y:auto;
+}
+
+.people-copilot-languages{
+    display:flex;
+
+    gap:5px;
+
+    margin-bottom:9px;
+}
+
+.people-copilot-lang{
+    flex:1;
+
+    border:
+        1px solid
+        rgba(0,255,220,.16);
+
+    background:
+        rgba(0,255,220,.035);
+
+    color:#a9c4c8;
+
+    padding:7px 5px;
+
+    border-radius:9px;
+
+    font-size:10px;
+
+    cursor:pointer;
+}
+
+.people-copilot-lang.active{
+    border-color:
+        rgba(0,255,220,.5);
+
+    color:#70ffea;
+
+    background:
+        rgba(0,255,220,.10);
+}
+
+.people-copilot-input-row{
+    display:flex;
+    gap:7px;
+}
+
+.people-copilot-input{
+    flex:1;
+    min-width:0;
+
+    padding:11px;
+
+    border-radius:10px;
+
+    border:
+        1px solid
+        rgba(0,255,220,.16);
+
+    background:
+        rgba(0,0,0,.28);
+
+    color:#fff;
+
+    outline:none;
+}
+
+.people-copilot-btn{
+    min-width:42px;
+
+    padding:0 11px;
+
+    border:
+        1px solid
+        rgba(0,255,220,.20);
+
+    border-radius:10px;
+
+    background:
+        rgba(0,255,220,.06);
+
+    color:#72ffeb;
+
+    cursor:pointer;
+
+    font-weight:800;
+}
+
+.people-copilot-btn.ask{
+    background:
+        linear-gradient(
+            135deg,
+            #00cdb4,
+            #087fc7
+        );
+
+    color:#fff;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:900px){
+
+    .main-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full-width{
+        grid-column:auto;
+    }
+}
+
+@media(max-width:600px){
+
+    header{
+        padding:14px 4%;
+    }
+
+    .user-name{
+        display:none;
+    }
+
+    .container{
+        width:94%;
+        padding-top:25px;
+    }
+
+    .hero{
+        padding:25px;
+    }
+
+    .card{
+        padding:20px;
+    }
+
+    .weather-grid{
+        grid-template-columns:1fr;
+    }
+
+    .location-search-row{
+        flex-direction:column;
+    }
+
+    .location-btn{
+        min-height:45px;
+    }
+
+    .map-wrapper{
+        height:340px;
+    }
+
+    #map{
+        min-height:340px;
+    }
+
+    .people-copilot{
+        right:16px;
+        bottom:16px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+<div class="brand">
+
+<div class="brand-icon">
+🚨
+</div>
+
+<div>
+
+<strong>
+ResQ AI
+</strong>
+
+<span>
+Intelligent Disaster Response
+</span>
+
+</div>
+
+</div>
+
+
+<div class="user-area">
+
+<span
+class="user-name"
+id="userName"
+>
+People User
+</span>
+
+
+<button
+class="logout-btn"
+onclick="logout()"
+>
+Logout
+</button>
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+<span class="eyebrow">
+RESQ AI EMERGENCY NETWORK
+</span>
+
+
+<h1>
+Emergency Assistance Portal
+</h1>
+
+
+<p>
+Enter the emergency location or use your
+current GPS location. ResQ AI will show the
+location on the map, current weather and
+nearby hospitals.
+</p>
+
+
+<div
+class="status"
+id="connectionStatus"
+>
+<span>●</span>
+Checking ResQ AI connection...
+</div>
+
+</section>
+
+
+<div class="main-grid">
+
+
+<!-- =====================================================
+     EMERGENCY REPORT
+===================================================== -->
+
+<section class="card">
+
+<div class="card-header">
+
+<span class="eyebrow">
+EMERGENCY REPORT
+</span>
+
+<h2>
+🚨 Report Emergency
+</h2>
+
+<p>
+Enter the disaster details and location.
+</p>
+
+</div>
+
+
+<form id="reportForm">
+
+
+<div class="form-group">
+
+<label>
+Disaster Type
+</label>
+
+<select
+id="disasterType"
+required
+>
+
+<option value="">
+Select disaster
+</option>
+
+<option value="Flood">
+Flood
+</option>
+
+<option value="Earthquake">
+Earthquake
+</option>
+
+<option value="Cyclone">
+Cyclone
+</option>
+
+<option value="Landslide">
+Landslide
+</option>
+
+<option value="Fire">
+Fire
+</option>
+
+<option value="Tsunami">
+Tsunami
+</option>
+
+<option value="Other">
+Other
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Affected People
+</label>
+
+<input
+type="number"
+id="affectedPeople"
+min="0"
+placeholder="Example: 120"
+required
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Emergency Location
+</label>
+
+
+<div class="location-search-row">
+
+<input
+type="text"
+id="location"
+placeholder="Example: Coimbatore"
+required
+>
+
+
+<button
+type="button"
+class="location-btn"
+onclick="searchLocation()"
+>
+🔎 Search
+</button>
+
+</div>
+
+
+<button
+type="button"
+class="gps-btn"
+onclick="useMyLocation()"
+>
+📍 Use My Current GPS Location
+</button>
+
+
+<div
+class="location-status"
+id="locationStatus"
+>
+Enter a place name and click Search.
+</div>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Road Access
+</label>
+
+
+<select
+id="roadAccess"
+>
+
+<option value="Open">
+Open
+</option>
+
+<option value="Partially Blocked">
+Partially Blocked
+</option>
+
+<option value="Blocked">
+Blocked
+</option>
+
+</select>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Hospital Distance (km)
+</label>
+
+<input
+type="number"
+id="hospitalDistance"
+placeholder="Auto detected"
+readonly
+>
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Emergency Description
+</label>
+
+<textarea
+id="emergencyDescription"
+placeholder="Describe what happened and urgent needs..."
+></textarea>
+
+</div>
+
+
+<button
+class="submit-btn"
+id="submitBtn"
+type="submit"
+>
+🚨 SEND EMERGENCY REPORT
+</button>
+
+
+<div
+id="reportResult"
+></div>
+
+
+<div
+class="priority-box"
+id="priorityBox"
+style="display:none"
+>
+
+<div
+class="priority-score"
+id="priorityScore"
+>
+0/100
+</div>
+
+
+<div
+class="priority-level"
+id="priorityLevel"
+>
+LOW
+</div>
+
+</div>
+
+
+</form>
+
+</section>
+
+
+<!-- =====================================================
+     MAP
+===================================================== -->
+
+<section class="card">
+
+<div class="card-header">
+
+<span class="eyebrow">
+LOCATION INTELLIGENCE
+</span>
+
+<h2>
+📍 Emergency Location
+</h2>
+
+<p>
+Selected location and hospital locations
+will appear on this map.
+</p>
+
+</div>
+
+
+<div class="map-wrapper">
+
+<div id="map"></div>
+
+</div>
+
+
+<div
+class="map-info"
+id="mapInfo"
+>
+🗺 Map ready. Search a location.
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     WEATHER
+===================================================== -->
+
+<section class="card">
+
+<div class="card-header">
+
+<span class="eyebrow">
+WEATHER INTELLIGENCE
+</span>
+
+<h2>
+🌤 Current Weather
+</h2>
+
+<p>
+Weather conditions at the selected
+emergency location.
+</p>
+
+</div>
+
+
+<div
+class="weather-location"
+id="weatherLocation"
+>
+📍 No location selected
+</div>
+
+
+<div class="weather-grid">
+
+
+<div class="weather-item">
+
+<div class="weather-icon">
+🌡️
+</div>
+
+<div class="weather-content">
+
+<span>
+TEMPERATURE
+</span>
+
+<strong id="temperature">
+-- °C
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="weather-item">
+
+<div class="weather-icon">
+💧
+</div>
+
+<div class="weather-content">
+
+<span>
+HUMIDITY
+</span>
+
+<strong id="humidity">
+-- %
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="weather-item">
+
+<div class="weather-icon">
+🌧️
+</div>
+
+<div class="weather-content">
+
+<span>
+RAINFALL
+</span>
+
+<strong id="rainfall">
+-- mm
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="weather-item">
+
+<div class="weather-icon">
+💨
+</div>
+
+<div class="weather-content">
+
+<span>
+WIND SPEED
+</span>
+
+<strong id="wind">
+-- km/h
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="weather-update">
+
+<button
+class="small-btn"
+onclick="loadWeather()"
+>
+↻ Update Weather
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     HOSPITALS
+===================================================== -->
+
+<section class="card">
+
+<div class="card-header">
+
+<span class="eyebrow">
+MEDICAL SUPPORT
+</span>
+
+<h2>
+🏥 Hospitals in Selected Area
+</h2>
+
+<p>
+Hospitals found around the selected
+emergency location.
+</p>
+
+</div>
+
+
+<div
+class="hospital-count"
+id="hospitalCount"
+>
+No location selected.
+</div>
+
+
+<div
+class="hospital-list"
+id="hospitalList"
+>
+
+<div class="no-hospital">
+Search a location to find hospitals.
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ALERTS
+===================================================== -->
+
+<section class="card full-width">
+
+<div class="card-header">
+
+<span class="eyebrow">
+EMERGENCY NETWORK
+</span>
+
+<h2>
+🚨 Emergency Alerts
+</h2>
+
+<p>
+Latest emergency reports and rescue
+priority alerts.
+</p>
+
+</div>
+
+
+<div
+class="alerts"
+id="alerts"
+>
+
+<div class="alert-item low">
+
+<div class="alert-title">
+ResQ AI is monitoring
+</div>
+
+<div class="alert-message">
+Waiting for emergency alerts.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+</div>
+
+</main>
+
+
+<!-- =====================================================
+     HOLOGRAM COPILOT
+===================================================== -->
+
+<div
+class="people-copilot collapsed"
+id="peopleCopilot"
+>
+
+<button
+class="people-copilot-toggle"
+id="peopleCopilotToggle"
+type="button"
+title="Open ResQ AI Assistant"
+>
+✦
+</button>
+
+
+<div class="people-copilot-content">
+
+
+<div class="people-copilot-title">
+
+<div>
+
+<div class="people-copilot-status">
+LOCAL AI CORE ONLINE
+</div>
+
+<strong>
+ResQ AI Assistant
+</strong>
+
+</div>
+
+
+<button
+class="people-copilot-close"
+id="peopleCopilotClose"
+type="button"
+>
+−
+</button>
+
+</div>
+
+
+<div class="people-holo-area">
+
+<div
+class="people-holo"
+id="peopleHologram"
+>
+
+<div class="people-holo-head"></div>
+
+<div
+class="people-holo-eye left"
+></div>
+
+<div
+class="people-holo-eye right"
+></div>
+
+<div class="people-holo-scan"></div>
+
+<div class="people-holo-body"></div>
+
+<div class="people-holo-light"></div>
+
+<div class="people-holo-base"></div>
+
+</div>
+
+</div>
+
+
+<div
+class="people-copilot-response"
+id="peopleCopilotResponse"
+>
+வணக்கம்! 😊 நான் ResQ AI Assistant.
+Location, weather, hospitals, rescue
+அல்லது emergency பற்றி கேளுங்க.
+</div>
+
+
+<div class="people-copilot-languages">
+
+<button
+class="people-copilot-lang active"
+data-language="auto"
+type="button"
+>
+AUTO
+</button>
+
+<button
+class="people-copilot-lang"
+data-language="ta-IN"
+type="button"
+>
+தமிழ்
+</button>
+
+<button
+class="people-copilot-lang"
+data-language="en-IN"
+type="button"
+>
+English
+</button>
+
+</div>
+
+
+<div class="people-copilot-input-row">
+
+<input
+class="people-copilot-input"
+id="peopleCopilotInput"
+type="text"
+placeholder="Ask ResQ AI..."
+autocomplete="off"
+>
+
+
+<button
+class="people-copilot-btn"
+id="peopleCopilotVoice"
+type="button"
+title="Voice"
+>
+🎤
+</button>
+
+
+<button
+class="people-copilot-btn ask"
+id="peopleCopilotAsk"
+type="button"
+>
+↵
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+<script>
+
+/* =====================================================
+   CONFIG
+===================================================== */
+
+const API =
+    "http://127.0.0.1:8001";
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let latitude = null;
+
+let longitude = null;
+
+let selectedLocationName = "";
+
+let map = null;
+
+let locationMarker = null;
+
+let hospitalMarkers = [];
+
+let alertTimer = null;
+
+let peopleRecognition = null;
+
+let peopleCopilotLanguage =
+    "auto";
+
+
+/* =====================================================
+   USER
+===================================================== */
+
+function loadUser(){
+
+    const storedUser =
+        localStorage.getItem(
+            "resqUser"
+        );
+
+
+    if(!storedUser){
+
+        window.location.href =
+            "login.html";
+
+        return null;
+
+    }
+
+
+    try{
+
+        const user =
+            JSON.parse(
+                storedUser
+            );
+
+
+        if(
+            !user.role ||
+            String(
+                user.role
+            ).toUpperCase() !== "PEOPLE"
+        ){
+
+            window.location.href =
+                "login.html";
+
+            return null;
+
+        }
+
+
+        const userName =
+            document.getElementById(
+                "userName"
+            );
+
+
+        if(userName){
+
+            userName.textContent =
+                user.name ||
+                "People User";
+
+        }
+
+
+        return user;
+
+    }catch(error){
+
+        console.error(
+            "User error:",
+            error
+        );
+
+
+        localStorage.removeItem(
+            "resqUser"
+        );
+
+
+        window.location.href =
+            "login.html";
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "resqUser"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   MAP
+===================================================== */
+
+function initializeMap(){
+
+    const mapElement =
+        document.getElementById(
+            "map"
+        );
+
+
+    if(
+        typeof L === "undefined"
+    ){
+
+        console.error(
+            "Leaflet not loaded."
+        );
+
+        return;
+
+    }
+
+
+    if(map){
+
+        map.invalidateSize();
+
+        return;
+
+    }
+
+
+    map =
+        L.map(
+            mapElement
+        )
+        .setView(
+            [
+                11.0168,
+                76.9558
+            ],
+            7
+        );
+
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+
+            maxZoom:19,
+
+            attribution:
+                "&copy; OpenStreetMap contributors"
+
+        }
+    )
+    .addTo(
+        map
+    );
+
+
+    setTimeout(
+        function(){
+
+            if(map){
+
+                map.invalidateSize();
+
+            }
+
+        },
+        500
+    );
+
+}
+
+
+/* =====================================================
+   CONNECTION
+===================================================== */
+
+async function checkConnection(){
+
+    const status =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+
+    try{
+
+        const response =
+            await fetch(
+                `${API}/health`,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Backend offline"
+            );
+
+        }
+
+
+        status.innerHTML =
+            "<span>●</span> ✓ ResQ AI Emergency Network is connected.";
+
+    }catch(error){
+
+        console.warn(
+            "Backend:",
+            error
+        );
+
+
+        status.innerHTML =
+            "<span>●</span> ⚡ ResQ AI frontend is ready.";
+
+    }
+
+}
+
+
+/* =====================================================
+   SEARCH LOCATION
+===================================================== */
+
+async function searchLocation(){
+
+    const input =
+        document.getElementById(
+            "location"
+        );
+
+
+    const locationStatus =
+        document.getElementById(
+            "locationStatus"
+        );
+
+
+    const locationText =
+        input.value.trim();
+
+
+    if(!locationText){
+
+        locationStatus.textContent =
+            "❌ Enter a location first.";
+
+        return;
+
+    }
+
+
+    locationStatus.textContent =
+        "🔄 Searching location...";
+
+
+    const weatherLocation =
+        document.getElementById(
+            "weatherLocation"
+        );
+
+
+    weatherLocation.textContent =
+        "🔄 Finding weather location...";
+
+
+    try{
+
+        const url =
+            "https://nominatim.openstreetmap.org/search" +
+
+            `?q=${encodeURIComponent(locationText)}` +
+
+            "&format=jsonv2" +
+
+            "&limit=1" +
+
+            "&addressdetails=1";
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Location search failed"
+            );
+
+        }
+
+
+        const results =
+            await response.json();
+
+
+        if(
+            !Array.isArray(results) ||
+            results.length === 0
+        ){
+
+            throw new Error(
+                "Location not found"
+            );
+
+        }
+
+
+        const place =
+            results[0];
+
+
+        latitude =
+            Number(
+                place.lat
+            );
+
+
+        longitude =
+            Number(
+                place.lon
+            );
+
+
+        if(
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude)
+        ){
+
+            throw new Error(
+                "Invalid location"
+            );
+
+        }
+
+
+        selectedLocationName =
+            place.display_name ||
+            locationText;
+
+
+        input.value =
+            selectedLocationName;
+
+
+        locationStatus.textContent =
+            `✓ Location selected: ${selectedLocationName}`;
+
+
+        await showLocationOnMap();
+
+
+        await loadWeather();
+
+
+        await loadHospitals();
+
+
+        await loadAlerts();
+
+
+    }catch(error){
+
+        console.error(
+            "SEARCH LOCATION ERROR:",
+            error
+        );
+
+
+        locationStatus.textContent =
+            "❌ " +
+            error.message;
+
+        weatherLocation.textContent =
+            "📍 Location not found.";
+
+    }
+
+}
+
+
+/* =====================================================
+   CURRENT GPS
+===================================================== */
+
+function useMyLocation(){
+
+    const locationStatus =
+        document.getElementById(
+            "locationStatus"
+        );
+
+
+    locationStatus.textContent =
+        "🔄 Getting current GPS location...";
+
+
+    if(
+        !navigator.geolocation
+    ){
+
+        locationStatus.textContent =
+            "❌ GPS not supported by this browser.";
+
+        return;
+
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function(position){
+
+            latitude =
+                Number(
+                    position.coords.latitude
+                );
+
+
+            longitude =
+                Number(
+                    position.coords.longitude
+                );
+
+
+            selectedLocationName =
+                `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+
+
+            document.getElementById(
+                "location"
+            ).value =
+                selectedLocationName;
+
+
+            locationStatus.textContent =
+                "✓ Current GPS location detected.";
+
+
+            await showLocationOnMap();
+
+
+            await loadLocationNameFromCoordinates();
+
+
+            await loadWeather();
+
+
+            await loadHospitals();
+
+
+            await loadAlerts();
+
+        },
+
+
+        function(error){
+
+            console.error(
+                "GPS ERROR:",
+                error
+            );
+
+
+            if(
+                error.code === 1
+            ){
+
+                locationStatus.textContent =
+                    "❌ Location permission denied. Type a location manually and click Search.";
+
+            }else if(
+                error.code === 2
+            ){
+
+                locationStatus.textContent =
+                    "❌ Current location unavailable.";
+
+            }else if(
+                error.code === 3
+            ){
+
+                locationStatus.textContent =
+                    "❌ GPS timed out. Type a location manually.";
+
+            }else{
+
+                locationStatus.textContent =
+                    "❌ GPS could not be detected.";
+
+            }
+
+        },
+
+
+        {
+
+            enableHighAccuracy:true,
+
+            timeout:20000,
+
+            maximumAge:0
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   LOCATION NAME FROM COORDINATES
+===================================================== */
+
+async function loadLocationNameFromCoordinates(){
+
+    if(
+        latitude === null ||
+        longitude === null
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `${API}/api/location-name` +
+                `?latitude=${encodeURIComponent(latitude)}` +
+                `&longitude=${encodeURIComponent(longitude)}`,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        if(response.ok){
+
+            const data =
+                await response.json();
+
+
+            const name =
+                data.display_name ||
+                data.location ||
+                data.address;
+
+
+            if(name){
+
+                selectedLocationName =
+                    name;
+
+
+                document.getElementById(
+                    "location"
+                ).value =
+                    name;
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Reverse location failed:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SHOW LOCATION ON MAP
+===================================================== */
+
+async function showLocationOnMap(){
+
+    if(
+        latitude === null ||
+        longitude === null
+    ){
+
+        return;
+
+    }
+
+
+    if(!map){
+
+        initializeMap();
+
+    }
+
+
+    if(map){
+
+        map.setView(
+            [
+                latitude,
+                longitude
+            ],
+            14
+        );
+
+    }
+
+
+    if(locationMarker){
+
+        locationMarker.setLatLng(
+            [
+                latitude,
+                longitude
+            ]
+        );
+
+    }else{
+
+        locationMarker =
+            L.marker(
+                [
+                    latitude,
+                    longitude
+                ]
+            )
+            .addTo(map);
+
+    }
+
+
+    locationMarker.bindPopup(
+        `
+        <b>📍 Emergency Location</b>
+        <br>
+        ${escapeHtml(
+            selectedLocationName ||
+            "Selected Location"
+        )}
+        `
+    );
+
+
+    document.getElementById(
+        "mapInfo"
+    ).textContent =
+        `📍 ${selectedLocationName || "Selected Location"}`;
+
+
+    setTimeout(
+        function(){
+
+            if(map){
+
+                map.invalidateSize();
+
+            }
+
+        },
+        300
+    );
+
+}
+
+
+/* =====================================================
+   WEATHER
+===================================================== */
+
+async function loadWeather(){
+
+    const weatherLocation =
+        document.getElementById(
+            "weatherLocation"
+        );
+
+
+    if(
+        latitude === null ||
+        longitude === null
+    ){
+
+        weatherLocation.textContent =
+            "📍 Select a location first.";
+
+        return;
+
+    }
+
+
+    weatherLocation.textContent =
+        "🔄 Loading current weather...";
+
+
+    try{
+
+        const url =
+            "https://api.open-meteo.com/v1/forecast" +
+
+            `?latitude=${encodeURIComponent(latitude)}` +
+
+            `&longitude=${encodeURIComponent(longitude)}` +
+
+            "&current=" +
+
+            [
+                "temperature_2m",
+                "relative_humidity_2m",
+                "rain",
+                "precipitation",
+                "wind_speed_10m"
+            ].join(",") +
+
+            "&temperature_unit=celsius" +
+
+            "&wind_speed_unit=kmh" +
+
+            "&precipitation_unit=mm";
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Weather API unavailable"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const current =
+            data.current ||
+            {};
+
+
+        const temperature =
+            current.temperature_2m ??
+            "--";
+
+
+        const humidity =
+            current.relative_humidity_2m ??
+            "--";
+
+
+        const rainfall =
+            current.rain ??
+            current.precipitation ??
+            0;
+
+
+        const wind =
+            current.wind_speed_10m ??
+            "--";
+
+
+        document.getElementById(
+            "temperature"
+        ).textContent =
+            `${temperature} °C`;
+
+
+        document.getElementById(
+            "humidity"
+        ).textContent =
+            `${humidity} %`;
+
+
+        document.getElementById(
+            "rainfall"
+        ).textContent =
+            `${rainfall} mm`;
+
+
+        document.getElementById(
+            "wind"
+        ).textContent =
+            `${wind} km/h`;
+
+
+        weatherLocation.textContent =
+            `📍 Current weather: ${selectedLocationName || "Selected location"}`;
+
+    }catch(error){
+
+        console.error(
+            "WEATHER ERROR:",
+            error
+        );
+
+
+        weatherLocation.textContent =
+            "❌ Weather unavailable.";
+
+    }
+
+}
+
+
+/* =====================================================
+   HOSPITAL SEARCH
+===================================================== */
+
+async function loadHospitals(){
+
+    const list =
+        document.getElementById(
+            "hospitalList"
+        );
+
+
+    const count =
+        document.getElementById(
+            "hospitalCount"
+        );
+
+
+    if(
+        latitude === null ||
+        longitude === null
+    ){
+
+        count.textContent =
+            "No location selected.";
+
+
+        list.innerHTML =
+            `
+            <div class="no-hospital">
+                Search a location first.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    count.textContent =
+        "🔄 Searching hospitals in selected area...";
+
+
+    list.innerHTML =
+        `
+        <div class="no-hospital">
+            🔄 Finding hospitals...
+        </div>
+        `;
+
+
+    clearHospitalMarkers();
+
+
+    try{
+
+        const radiusKm =
+            25;
+
+
+        const latDelta =
+            radiusKm /
+            111;
+
+
+        const lonDelta =
+            radiusKm /
+            (
+                111 *
+                Math.max(
+                    0.2,
+                    Math.cos(
+                        latitude *
+                        Math.PI /
+                        180
+                    )
+                )
+            );
+
+
+        const left =
+            longitude -
+            lonDelta;
+
+
+        const right =
+            longitude +
+            lonDelta;
+
+
+        const top =
+            latitude +
+            latDelta;
+
+
+        const bottom =
+            latitude -
+            latDelta;
+
+
+        const url =
+            "https://nominatim.openstreetmap.org/search" +
+
+            "?q=hospital" +
+
+            "&format=jsonv2" +
+
+            "&limit=50" +
+
+            "&addressdetails=1" +
+
+            `&viewbox=${left},${top},${right},${bottom}` +
+
+            "&bounded=1";
+
+
+        const response =
+            await fetch(
+                url,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Hospital search failed"
+            );
+
+        }
+
+
+        const results =
+            await response.json();
+
+
+        const hospitals =
+            normalizeHospitals(
+                results
+            );
+
+
+        if(
+            hospitals.length === 0
+        ){
+
+            throw new Error(
+                "No hospitals found"
+            );
+
+        }
+
+
+        displayHospitals(
+            hospitals
+        );
+
+
+        return;
+
+    }catch(error){
+
+        console.warn(
+            "Nominatim hospital search failed:",
+            error
+        );
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                `${API}/api/hospitals` +
+                `?latitude=${encodeURIComponent(latitude)}` +
+                `&longitude=${encodeURIComponent(longitude)}` +
+                `&radius=25000`,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            response.ok &&
+            data.status === "success" &&
+            Array.isArray(data.hospitals)
+        ){
+
+            const hospitals =
+                data.hospitals.map(
+                    function(item){
+
+                        return {
+
+                            name:
+                                item.name ||
+                                "Hospital",
+
+                            distance:
+                                Number(
+                                    item.distance_km ||
+                                    0
+                                ),
+
+                            address:
+                                item.address ||
+                                "Hospital location available",
+
+                            latitude:
+                                Number(
+                                    item.latitude ||
+                                    0
+                                ),
+
+                            longitude:
+                                Number(
+                                    item.longitude ||
+                                    0
+                                )
+
+                        };
+
+                    }
+                );
+
+
+            if(
+                hospitals.length
+            ){
+
+                displayHospitals(
+                    hospitals
+                );
+
+                return;
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Backend hospital search failed:",
+            error
+        );
+
+    }
+
+
+    count.textContent =
+        "No hospitals found.";
+
+
+    list.innerHTML =
+        `
+        <div class="no-hospital">
+            ❌ No hospitals found in the selected area.
+        </div>
+        `;
+
+}
+
+
+/* =====================================================
+   NORMALIZE HOSPITALS
+===================================================== */
+
+function normalizeHospitals(
+    results
+){
+
+    if(
+        !Array.isArray(results)
+    ){
+
+        return [];
+
+    }
+
+
+    const hospitals =
+        results
+        .map(
+            function(item){
+
+                const hospitalLat =
+                    Number(
+                        item.lat
+                    );
+
+
+                const hospitalLon =
+                    Number(
+                        item.lon
+                    );
+
+
+                if(
+                    !Number.isFinite(
+                        hospitalLat
+                    ) ||
+                    !Number.isFinite(
+                        hospitalLon
+                    )
+                ){
+
+                    return null;
+
+                }
+
+
+                const hospitalName =
+                    item.name ||
+                    (
+                        item.display_name ||
+                        "Hospital"
+                    )
+                    .split(",")[0]
+                    .trim();
+
+
+                return {
+
+                    name:
+                        hospitalName,
+
+                    distance:
+                        calculateDistanceKm(
+                            latitude,
+                            longitude,
+                            hospitalLat,
+                            hospitalLon
+                        ),
+
+                    address:
+                        item.display_name ||
+                        "Hospital location available",
+
+                    latitude:
+                        hospitalLat,
+
+                    longitude:
+                        hospitalLon
+
+                };
+
+            }
+        )
+        .filter(
+            Boolean
+        )
+        .sort(
+            function(a,b){
+
+                return (
+                    a.distance -
+                    b.distance
+                );
+
+            }
+        );
+
+
+    return hospitals;
+
+}
+
+
+/* =====================================================
+   DISPLAY HOSPITALS
+===================================================== */
+
+function displayHospitals(
+    hospitals
+){
+
+    const list =
+        document.getElementById(
+            "hospitalList"
+        );
+
+
+    const count =
+        document.getElementById(
+            "hospitalCount"
+        );
+
+
+    count.textContent =
+        `✓ ${hospitals.length} hospitals found within the selected search area`;
+
+
+    list.innerHTML =
+        "";
+
+
+    hospitals.forEach(
+        function(
+            hospital,
+            index
+        ){
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "hospital-card";
+
+
+            card.innerHTML =
+                `
+                <div class="hospital-card-name">
+
+                    🏥
+                    ${index + 1}.
+                    ${escapeHtml(
+                        hospital.name
+                    )}
+
+                </div>
+
+                <div class="hospital-card-distance">
+
+                    📍
+                    ${hospital.distance.toFixed(2)}
+                    km away
+
+                </div>
+
+                <div class="hospital-card-address">
+
+                    ${escapeHtml(
+                        hospital.address
+                    )}
+
+                </div>
+                `;
+
+
+            card.addEventListener(
+                "click",
+                function(){
+
+                    if(map){
+
+                        map.setView(
+                            [
+                                hospital.latitude,
+                                hospital.longitude
+                            ],
+                            17
+                        );
+
+                    }
+
+                }
+            );
+
+
+            list.appendChild(
+                card
+            );
+
+
+            addHospitalMarker(
+                hospital,
+                index + 1
+            );
+
+        }
+    );
+
+
+    if(
+        hospitals.length > 0
+    ){
+
+        document.getElementById(
+            "hospitalDistance"
+        ).value =
+            hospitals[0].distance.toFixed(
+                2
+            );
+
+    }
+
+}
+
+
+/* =====================================================
+   HOSPITAL MARKER
+===================================================== */
+
+function addHospitalMarker(
+    hospital,
+    number
+){
+
+    if(
+        !map ||
+        !Number.isFinite(
+            hospital.latitude
+        ) ||
+        !Number.isFinite(
+            hospital.longitude
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const marker =
+        L.marker(
+            [
+                hospital.latitude,
+                hospital.longitude
+            ]
+        )
+        .addTo(
+            map
+        );
+
+
+    marker.bindPopup(
+        `
+        <b>🏥 ${escapeHtml(
+            hospital.name
+        )}</b>
+
+        <br>
+
+        📍
+        ${hospital.distance.toFixed(2)}
+        km
+
+        <br>
+
+        <small>
+        ${escapeHtml(
+            hospital.address
+        )}
+        </small>
+        `
+    );
+
+
+    hospitalMarkers.push(
+        marker
+    );
+
+}
+
+
+/* =====================================================
+   CLEAR HOSPITAL MARKERS
+===================================================== */
+
+function clearHospitalMarkers(){
+
+    hospitalMarkers.forEach(
+        function(marker){
+
+            if(map){
+
+                map.removeLayer(
+                    marker
+                );
+
+            }
+
+        }
+    );
+
+
+    hospitalMarkers = [];
+
+}
+
+
+/* =====================================================
+   DISTANCE
+===================================================== */
+
+function calculateDistanceKm(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+){
+
+    const R =
+        6371;
+
+
+    const dLat =
+        (
+            lat2 -
+            lat1
+        ) *
+        Math.PI /
+        180;
+
+
+    const dLon =
+        (
+            lon2 -
+            lon1
+        ) *
+        Math.PI /
+        180;
+
+
+    const a =
+        Math.sin(
+            dLat / 2
+        ) *
+        Math.sin(
+            dLat / 2
+        ) +
+
+        Math.cos(
+            lat1 *
+            Math.PI /
+            180
+        ) *
+
+        Math.cos(
+            lat2 *
+            Math.PI /
+            180
+        ) *
+
+        Math.sin(
+            dLon / 2
+        ) *
+
+        Math.sin(
+            dLon / 2
+        );
+
+
+    const c =
+        2 *
+        Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(
+                1 - a
+            )
+        );
+
+
+    return R * c;
+
+}
+
+
+/* =====================================================
+   ALERTS
+===================================================== */
+
+async function loadAlerts(){
+
+    const container =
+        document.getElementById(
+            "alerts"
+        );
+
+
+    try{
+
+        const response =
+            await fetch(
+                `${API}/api/alerts`,
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Alert service failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const alerts =
+            Array.isArray(
+                data.alerts
+            )
+                ? data.alerts
+                : [];
+
+
+        if(
+            alerts.length === 0
+        ){
+
+            container.innerHTML =
+                `
+                <div class="alert-item low">
+
+                    <div class="alert-title">
+                        ResQ AI is monitoring
+                    </div>
+
+                    <div class="alert-message">
+                        No emergency alerts yet.
+                    </div>
+
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            alerts
+            .slice(
+                0,
+                10
+            )
+            .map(
+                function(alert){
+
+                    const level =
+                        String(
+                            alert.priority_level ||
+                            "LOW"
+                        )
+                        .toLowerCase();
+
+
+                    return `
+                    <div
+                        class="alert-item ${level}"
+                    >
+
+                        <div class="alert-title">
+
+                            ${escapeHtml(
+                                alert.title ||
+                                "Emergency Alert"
+                            )}
+
+                        </div>
+
+                        <div class="alert-message">
+
+                            ${escapeHtml(
+                                alert.message ||
+                                ""
+                            )}
+
+                        </div>
+
+                        <div class="alert-time">
+
+                            📍
+                            ${escapeHtml(
+                                alert.location ||
+                                "Unknown"
+                            )}
+
+                            <br>
+
+                            ${formatDate(
+                                alert.created_at
+                            )}
+
+                        </div>
+
+                    </div>
+                    `;
+
+                }
+            )
+            .join("");
+
+    }catch(error){
+
+        console.warn(
+            "Alert error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   REPORT SUBMIT
+===================================================== */
+
+document
+    .getElementById(
+        "reportForm"
+    )
+    .addEventListener(
+        "submit",
+        async function(event){
+
+            event.preventDefault();
+
+
+            const result =
+                document.getElementById(
+                    "reportResult"
+                );
+
+
+            const submitButton =
+                document.getElementById(
+                    "submitBtn"
+                );
+
+
+            if(
+                latitude === null ||
+                longitude === null
+            ){
+
+                result.className =
+                    "error";
+
+
+                result.textContent =
+                    "❌ First search the emergency location.";
+
+
+                return;
+
+            }
+
+
+            const disaster =
+                document.getElementById(
+                    "disasterType"
+                ).value;
+
+
+            const people =
+                Number(
+                    document.getElementById(
+                        "affectedPeople"
+                    ).value ||
+                    0
+                );
+
+
+            if(!disaster){
+
+                result.className =
+                    "error";
+
+
+                result.textContent =
+                    "❌ Select disaster type.";
+
+
+                return;
+
+            }
+
+
+            const payload = {
+
+                disaster_type:
+                    disaster,
+
+                location:
+                    document.getElementById(
+                        "location"
+                    ).value.trim(),
+
+                latitude:
+                    latitude,
+
+                longitude:
+                    longitude,
+
+                affected_people:
+                    people,
+
+                road_access:
+                    document.getElementById(
+                        "roadAccess"
+                    ).value,
+
+                hospital_distance_km:
+                    document.getElementById(
+                        "hospitalDistance"
+                    ).value
+                        ? Number(
+                            document.getElementById(
+                                "hospitalDistance"
+                            ).value
+                        )
+                        : null,
+
+                description:
+                    document.getElementById(
+                        "emergencyDescription"
+                    ).value.trim()
+
+            };
+
+
+            submitButton.disabled =
+                true;
+
+
+            result.className =
+                "";
+
+
+            result.textContent =
+                "🔄 Sending emergency report...";
+
+
+            try{
+
+                const response =
+                    await fetch(
+                        `${API}/api/disaster-reports`,
+                        {
+
+                            method:
+                                "POST",
+
+                            headers:{
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if(
+                    !response.ok ||
+                    data.status !== "success"
+                ){
+
+                    throw new Error(
+                        data.message ||
+                        "Report submission failed."
+                    );
+
+                }
+
+
+                result.className =
+                    "success";
+
+
+                result.textContent =
+                    "✅ Emergency report submitted successfully. Rescue team has been alerted.";
+
+
+                const score =
+                    Number(
+                        data.priority?.score ||
+                        0
+                    );
+
+
+                const level =
+                    data.priority?.level ||
+                    "LOW";
+
+
+                document.getElementById(
+                    "priorityScore"
+                ).textContent =
+                    `${score}/100`;
+
+
+                document.getElementById(
+    "priorityLevel"
+).textContent =
+    `🤖 ML RESCUE PRIORITY: ${level}`;
+
+                document.getElementById(
+                    "priorityBox"
+                ).style.display =
+                    "block";
+
+
+                await loadAlerts();
+
+
+            }catch(error){
+
+                console.error(
+                    "REPORT ERROR:",
+                    error
+                );
+
+
+                result.className =
+                    "error";
+
+
+                result.textContent =
+                    "❌ " +
+                    error.message;
+
+            }
+
+
+            submitButton.disabled =
+                false;
+
+        }
+    );
+
+
+/* =====================================================
+   COPILOT
+   IMPROVED VERSION
+===================================================== */
+
+const peopleCopilot =
+    document.getElementById(
+        "peopleCopilot"
+    );
+
+
+const peopleCopilotToggle =
+    document.getElementById(
+        "peopleCopilotToggle"
+    );
+
+
+const peopleCopilotClose =
+    document.getElementById(
+        "peopleCopilotClose"
+    );
+
+
+const peopleCopilotInput =
+    document.getElementById(
+        "peopleCopilotInput"
+    );
+
+
+const peopleCopilotResponse =
+    document.getElementById(
+        "peopleCopilotResponse"
+    );
+
+
+const peopleCopilotAsk =
+    document.getElementById(
+        "peopleCopilotAsk"
+    );
+
+
+const peopleCopilotVoice =
+    document.getElementById(
+        "peopleCopilotVoice"
+    );
+
+
+const peopleHologram =
+    document.getElementById(
+        "peopleHologram"
+    );
+
+
+/* =====================================================
+   COPILOT TOGGLE
+===================================================== */
+
+peopleCopilotToggle.addEventListener(
+    "click",
+    function(){
+
+        peopleCopilot.classList.toggle(
+            "collapsed"
+        );
+
+
+        if(
+            !peopleCopilot.classList.contains(
+                "collapsed"
+            )
+        ){
+
+            setTimeout(
+                function(){
+
+                    peopleCopilotInput.focus();
+
+                },
+                100
+            );
+
+        }
+
+    }
+);
+
+
+peopleCopilotClose.addEventListener(
+    "click",
+    function(){
+
+        peopleCopilot.classList.add(
+            "collapsed"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   LANGUAGE
+===================================================== */
+
+document
+    .querySelectorAll(
+        ".people-copilot-lang"
+    )
+    .forEach(
+        function(button){
+
+            button.addEventListener(
+                "click",
+                function(){
+
+                    peopleCopilotLanguage =
+                        button.dataset.language ||
+                        "auto";
+
+
+                    document
+                        .querySelectorAll(
+                            ".people-copilot-lang"
+                        )
+                        .forEach(
+                            function(item){
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    if(
+                        peopleCopilotLanguage ===
+                        "ta-IN"
+                    ){
+
+                        peopleCopilotResponse.innerText =
+                            "வணக்கம்! 😊 Rescue, weather, hospital, location மற்றும் emergency பற்றி கேளுங்க.";
+
+                    }else{
+
+                        peopleCopilotResponse.innerText =
+                            "Hello! 😊 Ask me about rescue, weather, hospitals, location or emergencies.";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =====================================================
+   LANGUAGE DETECTION
+===================================================== */
+
+function detectLanguage(
+    text
+){
+
+    if(
+        peopleCopilotLanguage ===
+        "ta-IN"
+    ){
+
+        return "ta-IN";
+
+    }
+
+
+    if(
+        peopleCopilotLanguage ===
+        "en-IN"
+    ){
+
+        return "en-IN";
+
+    }
+
+
+    if(
+        /[\u0B80-\u0BFF]/.test(
+            text
+        )
+    ){
+
+        return "ta-IN";
+
+    }
+
+
+    const lower =
+        text.toLowerCase();
+
+
+    const tanglishWords = [
+
+        "enna",
+        "ennaa",
+
+        "eppadi",
+        "epdi",
+        "epdiya",
+        "eppadiya",
+
+        "enga",
+        "engae",
+        "inge",
+        "inga",
+        "anga",
+
+        "enakku",
+        "ungalukku",
+        "unga",
+        "avanga",
+        "avangala",
+
+        "irukku",
+        "iruka",
+        "irukkaa",
+
+        "venum",
+        "venuma",
+
+        "pannanum",
+        "pannanuma",
+
+        "panna",
+        "panradhu",
+        "panrathu",
+        "pannunga",
+
+        "sollu",
+        "sollunga",
+        "kudunga",
+
+        "mudhala",
+        "muthalla",
+        "ippo",
+
+        "rescue",
+        "hospital",
+        "weather",
+        "medical",
+
+        "mazhai",
+        "vellam",
+        "puyal",
+        "thee",
+        "neruppu",
+
+        "panic",
+        "normal",
+        "paduthura",
+        "paduthanum",
+        "calm",
+
+        "bayam",
+        "bayapadura",
+        "bayapaduringa",
+
+        "help",
+        "people",
+        "trapped",
+        "sikkikittanga"
+
+    ];
+
+
+    if(
+        tanglishWords.some(
+            function(word){
+
+                return lower.includes(
+                    word
+                );
+
+            }
+        )
+    ){
+
+        return "ta-IN";
+
+    }
+
+
+    return "en-IN";
+
+}
+
+
+/* =====================================================
+   COPILOT MAIN
+   IMPROVED INTENT ENGINE
+===================================================== */
+
+async function askPeopleCopilot(){
+
+    const question =
+        peopleCopilotInput.value.trim();
+
+
+    if(!question){
+
+        showCopilot(
+            "😊 கேளுங்க... நான் help பண்ணுகிறேன்.",
+            "ta-IN"
+        );
+
+        return;
+
+    }
+
+
+    const language =
+        detectLanguage(
+            question
+        );
+
+
+    const lower =
+        question
+            .toLowerCase()
+            .trim();
+
+
+    peopleCopilotResponse.innerText =
+        language === "ta-IN"
+            ? "🔄 சரி... பார்க்கிறேன்..."
+            : "🔄 Okay... checking...";
+
+
+    /* =================================================
+       HELPER
+    ================================================= */
+
+    const hasAny = function(words){
+
+        return words.some(
+            function(word){
+
+                return lower.includes(
+                    word
+                );
+
+            }
+        );
+
+    };
+
+
+    /* =================================================
+       WEATHER
+    ================================================= */
+
+    const weatherIntent =
+        hasAny([
+
+            "weather",
+            "temperature",
+            "rain",
+            "rainfall",
+            "humidity",
+            "wind",
+
+            "weather condition",
+
+            "current climate",
+
+            "mazhai",
+            "malai",
+            "venilai",
+            "vannilai",
+            "kaathu",
+            "veppam",
+            "kulir",
+
+            "வானிலை",
+            "மழை",
+            "வெப்பநிலை",
+            "காற்று",
+            "ஈரப்பதம்"
+
+        ]);
+
+
+    if(weatherIntent){
+
+        if(
+            latitude === null ||
+            longitude === null
+        ){
+
+            showCopilot(
+
+                language === "ta-IN"
+
+                    ?
+
+                    "📍 முதலில் Emergency Location-ஐ Search பண்ணுங்க. அதுக்கப்புறம் current weather சொல்ல முடியும்."
+
+                    :
+
+                    "📍 First search the emergency location. Then I can provide the current weather.",
+
+                language
+
+            );
+
+            return;
+
+        }
+
+
+        await loadWeather();
+
+
+        const temperature =
+            document.getElementById(
+                "temperature"
+            ).innerText;
+
+
+        const humidity =
+            document.getElementById(
+                "humidity"
+            ).innerText;
+
+
+        const rainfall =
+            document.getElementById(
+                "rainfall"
+            ).innerText;
+
+
+        const wind =
+            document.getElementById(
+                "wind"
+            ).innerText;
+
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🌤 Current Weather
+
+📍 ${selectedLocationName}
+
+🌡 Temperature: ${temperature}
+💧 Humidity: ${humidity}
+🌧 Rainfall: ${rainfall}
+💨 Wind Speed: ${wind}
+
+இந்த weather data selected emergency location-லிருந்து பெறப்படுகிறது.`
+
+                :
+
+`🌤 Current Weather
+
+📍 ${selectedLocationName}
+
+🌡 Temperature: ${temperature}
+💧 Humidity: ${humidity}
+🌧 Rainfall: ${rainfall}
+💨 Wind Speed: ${wind}
+
+This weather data is based on the selected emergency location.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       HOSPITAL
+    ================================================= */
+
+    const hospitalIntent =
+        hasAny([
+
+            "hospital",
+            "hospitals",
+            "medical",
+            "doctor",
+            "ambulance",
+            "medical help",
+
+            "nearest hospital",
+            "nearby hospital",
+
+            "hospital enga",
+            "hospital iruka",
+            "hospital venum",
+
+            "maruthuvamanai",
+
+            "மருத்துவமனை",
+            "மருத்துவ"
+
+        ]);
+
+
+    if(hospitalIntent){
+
+        if(
+            latitude === null ||
+            longitude === null
+        ){
+
+            showCopilot(
+
+                language === "ta-IN"
+
+                    ?
+
+                    "📍 முதலில் location search பண்ணுங்க. அப்புறம் அந்த area-ல உள்ள hospitals காட்டுவேன்."
+
+                    :
+
+                    "📍 First search for a location. Then I can show hospitals in that area.",
+
+                language
+
+            );
+
+            return;
+
+        }
+
+
+        await loadHospitals();
+
+
+        const hospitalCards =
+            document.querySelectorAll(
+                ".hospital-card"
+            );
+
+
+        const countText =
+            document.getElementById(
+                "hospitalCount"
+            ).innerText;
+
+
+        if(
+            hospitalCards.length > 0
+        ){
+
+            const firstName =
+                hospitalCards[0]
+                .querySelector(
+                    ".hospital-card-name"
+                );
+
+
+            const firstDistance =
+                hospitalCards[0]
+                .querySelector(
+                    ".hospital-card-distance"
+                );
+
+
+            const firstAddress =
+                hospitalCards[0]
+                .querySelector(
+                    ".hospital-card-address"
+                );
+
+
+            const answer =
+
+                language === "ta-IN"
+
+                    ?
+
+`🏥 Medical Support
+
+${countText}
+
+📌 Nearest Hospital:
+${firstName ? firstName.innerText : "Nearest Hospital"}
+
+📍 ${firstDistance ? firstDistance.innerText : ""}
+
+${firstAddress ? firstAddress.innerText : ""}
+
+Emergency என்றால் 112 / 108-க்கு call பண்ணுங்க.`
+
+                    :
+
+`🏥 Medical Support
+
+${countText}
+
+📌 Nearest Hospital:
+${firstName ? firstName.innerText : "Nearest Hospital"}
+
+📍 ${firstDistance ? firstDistance.innerText : ""}
+
+${firstAddress ? firstAddress.innerText : ""}
+
+For an emergency, call 112 or 108.`;
+
+
+            showCopilot(
+                answer,
+                language
+            );
+
+        }else{
+
+            showCopilot(
+
+                language === "ta-IN"
+
+                    ?
+
+                    "❌ இந்த location-க்கு hospital data கிடைக்கவில்லை. வேறு location search பண்ணிப் பாருங்க."
+
+                    :
+
+                    "❌ No hospital data was found for this location. Try another location.",
+
+                language
+
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    /* =================================================
+       PANIC / CALM
+    ================================================= */
+
+    const panicIntent =
+        hasAny([
+
+            "panic",
+            "panicking",
+
+            "scared",
+            "afraid",
+            "fear",
+            "frightened",
+            "terrified",
+
+            "crying",
+            "cry",
+
+            "calm people",
+            "calm them",
+            "calm someone",
+            "make them calm",
+
+            "normal people",
+            "people normal",
+
+            "people are scared",
+            "people panic",
+            "people crying",
+
+            "how to calm",
+
+            "avanga panic",
+            "avanga bayam",
+            "bayapadura",
+            "bayapaduringa",
+            "bayama irukku",
+
+            "calm panradhu",
+            "calm panna",
+            "calm panrathu",
+
+            "normal paduthura",
+            "normal paduthanum",
+            "normal aakka",
+
+            "அமைதியாக",
+            "பயம்",
+            "பதற்றம்",
+            "அழுகிறார்கள்"
+
+        ]);
+
+
+    if(panicIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🧑‍🤝‍🧑 Panic-ஆ இருக்கும் people-ஐ calm பண்ண:
+
+1. முதலில் நீங்களே calm-ஆ இருங்க.
+2. மெதுவான குரலில் பேசுங்க.
+3. “நீங்க safe-ஆ இருக்கீங்க, help வருது” என்று reassure பண்ணுங்க.
+4. Immediate danger இல்லையென்றால் safe area-க்கு guide பண்ணுங்க.
+5. எல்லாரும் ஒரே நேரத்தில் ஓடாமல் இருக்க சொல்லுங்க.
+6. Children மற்றும் elderly people-க்கு extra support கொடுங்க.
+7. Injured person-ஐ தேவையில்லாமல் move பண்ணாதீங்க.
+8. Serious injury அல்லது unconsciousness இருந்தால் medical help உடனே call பண்ணுங்க.
+
+🚨 Goal: panic குறைத்து safe evacuation மற்றும் organized rescue-க்கு help பண்ணுவது.`
+
+                :
+
+`🧑‍🤝‍🧑 To calm people during an emergency:
+
+1. Stay calm yourself.
+2. Speak slowly and clearly.
+3. Reassure them that help is coming.
+4. Guide them to a safe area when possible.
+5. Prevent everyone from running at the same time.
+6. Give extra support to children and elderly people.
+7. Do not unnecessarily move injured people.
+8. Call medical help for serious injury or unconsciousness.
+
+🚨 Goal: reduce panic, maintain safety and support organized rescue.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       RESCUE
+    ================================================= */
+
+    const rescueIntent =
+        hasAny([
+
+            "rescue",
+
+            "rescue people",
+            "rescue them",
+
+            "rescue avanga",
+            "rescue avangala",
+
+            "rescue panradhu",
+            "rescue panna",
+            "rescue epdi",
+
+            "eppadi rescue",
+            "epdi rescue",
+
+            "how to rescue",
+            "how can i rescue",
+            "how do i rescue",
+
+            "save people",
+            "save them",
+            "save avangala",
+
+            "people trapped",
+            "person trapped",
+            "trapped people",
+            "someone trapped",
+
+            "people stuck",
+            "someone stuck",
+            "stuck people",
+
+            "trap aayirukanga",
+            "trapped ah",
+            "sikkikittanga",
+
+            "மீட்பு",
+            "மீட்க",
+            "சிக்கி"
+
+        ]);
+
+
+    if(rescueIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🚨 Basic Rescue Guidance
+
+1. முதலில் அந்த இடம் safe-ஆ இருக்கிறதா check பண்ணுங்க.
+2. Immediate danger இருந்தால் 112-க்கு call பண்ணுங்க.
+3. Rescue team-க்கு exact location மற்றும் trapped people count சொல்லுங்க.
+4. Safe evacuation route இருந்தால் அதை பயன்படுத்துங்க.
+5. Children, elderly மற்றும் seriously injured people-க்கு priority கொடுங்க.
+6. Injured person-ஐ unnecessary-ஆ தூக்கவோ இழுக்கவோ வேண்டாம்.
+7. Flood water, fire, damaged building போன்ற dangerous area-க்குள் training இல்லாமல் போகாதீங்க.
+8. Rescue team instructions-ஐ follow பண்ணுங்க.
+
+⚠️ முதலில் உங்கள் safety. Professional rescue செய்ய வேண்டிய situation-ஐ நீங்களே attempt பண்ணாதீங்க.`
+
+                :
+
+`🚨 Basic Rescue Guidance
+
+1. Check whether the scene is safe.
+2. Call 112 if there is immediate danger.
+3. Give responders the exact location and number of trapped people.
+4. Use a safe evacuation route when available.
+5. Prioritize children, elderly people and seriously injured people.
+6. Do not unnecessarily lift or drag injured people.
+7. Do not enter floodwater, fire zones or damaged buildings without proper training.
+8. Follow instructions from trained rescue personnel.
+
+⚠️ Your safety comes first. Do not attempt professional rescue operations without training.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       FIRE
+    ================================================= */
+
+    const fireIntent =
+        hasAny([
+
+            "fire",
+            "fire accident",
+            "building fire",
+            "house fire",
+
+            "neruppu",
+            "thee",
+
+            "தீ",
+            "தீ விபத்து"
+
+        ]);
+
+
+    if(fireIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🔥 Fire Emergency
+
+• உடனே safe distance-க்கு போங்க.
+• 112-க்கு call பண்ணுங்க.
+• Smoke அதிகமாக இருந்தால் கீழே குனிந்து வெளியேற முயற்சி பண்ணுங்க.
+• Lift பயன்படுத்தாதீங்க.
+• Fire area-க்குள் திரும்பிப் போகாதீங்க.
+• Training இல்லாமல் fire-ஐ அணைக்க முயற்சி பண்ணாதீங்க.
+• Injured அல்லது trapped people இருப்பதை responders-க்கு சொல்லுங்க.`
+
+                :
+
+`🔥 Fire Emergency
+
+• Move to a safe distance immediately.
+• Call 112.
+• If there is heavy smoke, stay low while moving toward an exit.
+• Do not use elevators.
+• Do not re-enter the fire area.
+• Do not attempt firefighting without proper training.
+• Tell responders about injured or trapped people.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       FLOOD
+    ================================================= */
+
+    const floodIntent =
+        hasAny([
+
+            "flood",
+            "flooding",
+            "flood water",
+
+            "water level",
+            "heavy water",
+
+            "vellam",
+            "vellaperukku",
+
+            "வெள்ளம்",
+            "வெள்ளப்பெருக்கு"
+
+        ]);
+
+
+    if(floodIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🌊 Flood Emergency
+
+• உயரமான safe area-க்கு move ஆகுங்க.
+• Fast-flowing flood water-க்குள் நடக்கவோ drive பண்ணவோ வேண்டாம்.
+• Electricity wires / poles-க்கு அருகில் போகாதீங்க.
+• Children மற்றும் elderly people-ஐ முதலில் safe place-க்கு கொண்டு செல்ல உதவுங்க.
+• Trapped people location-ஐ rescue team-க்கு share பண்ணுங்க.
+• Immediate danger இருந்தால் 112-க்கு call பண்ணுங்க.`
+
+                :
+
+`🌊 Flood Emergency
+
+• Move to higher and safer ground.
+• Do not walk or drive through fast-moving floodwater.
+• Stay away from electrical wires and poles.
+• Help children and elderly people reach a safe place.
+• Share trapped-person locations with responders.
+• Call 112 for immediate danger.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       EARTHQUAKE
+    ================================================= */
+
+    const earthquakeIntent =
+        hasAny([
+
+            "earthquake",
+            "earth quake",
+            "quake",
+
+            "nilanadukkam",
+            "nilathadi",
+
+            "நிலநடுக்கம்"
+
+        ]);
+
+
+    if(earthquakeIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🌍 Earthquake Safety
+
+• உள்ளே இருந்தால் sturdy table/desk கீழ் cover எடுங்க.
+• Windows மற்றும் falling objects-லிருந்து விலகி இருங்க.
+• Shaking நின்ற பிறகு safe evacuation route use பண்ணுங்க.
+• Damaged building-க்குள் மீண்டும் போகாதீங்க.
+• Injured அல்லது trapped people location-ஐ responders-க்கு சொல்லுங்க.
+• Immediate danger இருந்தால் 112 call பண்ணுங்க.`
+
+                :
+
+`🌍 Earthquake Safety
+
+• If indoors, take cover under a sturdy table or desk.
+• Stay away from windows and falling objects.
+• After shaking stops, use a safe evacuation route.
+• Do not re-enter damaged buildings.
+• Report injured or trapped people to responders.
+• Call 112 if there is immediate danger.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       CYCLONE
+    ================================================= */
+
+    const cycloneIntent =
+        hasAny([
+
+            "cyclone",
+            "storm",
+            "hurricane",
+            "strong wind",
+            "heavy wind",
+
+            "puyal",
+
+            "புயல்"
+
+        ]);
+
+
+    if(cycloneIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🌀 Cyclone Safety
+
+• Strong building அல்லது official shelter-ல் stay பண்ணுங்க.
+• Windows-லிருந்து விலகி இருங்க.
+• Loose objects-ஐ avoid பண்ணுங்க.
+• Flooding இருந்தால் higher ground-க்கு move ஆகுங்க.
+• Power lines-க்கு அருகில் போகாதீங்க.
+• Official rescue instructions follow பண்ணுங்க.`
+
+                :
+
+`🌀 Cyclone Safety
+
+• Stay inside a strong building or official shelter.
+• Stay away from windows.
+• Avoid loose or falling objects.
+• Move to higher ground if flooding occurs.
+• Stay away from power lines.
+• Follow official rescue instructions.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       WHAT SHOULD I DO NOW
+    ================================================= */
+
+    const immediateIntent =
+        hasAny([
+
+            "what should i do",
+            "what do i do",
+            "what can i do",
+
+            "what to do",
+            "what now",
+            "what should we do",
+
+            "help me",
+            "i need help",
+
+            "now what",
+            "immediately what",
+
+            "enna seiyanum",
+            "enna panradhu",
+            "enna panna",
+            "enna pannanum",
+
+            "ippo enna",
+            "ippo enna seiyanum",
+            "ippo enna panradhu",
+
+            "mudhala enna",
+            "mudhala enna panradhu",
+            "muthalla enna",
+
+            "இப்போது என்ன",
+            "என்ன செய்ய"
+
+        ]);
+
+
+    if(immediateIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🚨 இப்போ செய்ய வேண்டிய முக்கியமான விஷயங்கள்:
+
+1. முதலில் safe place-க்கு போங்க.
+2. Immediate danger இருந்தால் 112-க்கு call பண்ணுங்க.
+3. Emergency location-ஐ share பண்ணுங்க.
+4. Affected people count-ஐ சொல்லுங்க.
+5. Injured / trapped people இருந்தால் responders-க்கு தகவல் கொடுங்க.
+6. Panic ஆகாமல் calm-ஆ இருங்க.
+7. Rescue team instructions follow பண்ணுங்க.
+
+⚠️ உங்கள் safety-யும் equally important.`
+
+                :
+
+`🚨 Immediate Steps
+
+1. Move to a safe place.
+2. Call 112 if there is immediate danger.
+3. Share the emergency location.
+4. Report the number of affected people.
+5. Inform responders about injured or trapped people.
+6. Stay calm.
+7. Follow rescue-team instructions.
+
+⚠️ Your own safety is equally important.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       PRIORITY
+    ================================================= */
+
+    const priorityIntent =
+        hasAny([
+
+            "priority",
+            "priority score",
+            "rescue score",
+            "score",
+
+            "risk score",
+            "high priority",
+            "medium priority",
+            "low priority",
+
+            "priority level",
+
+            "முன்னுரிமை",
+            "score enna"
+
+        ]);
+
+
+    if(priorityIntent){
+
+        const score =
+            document.getElementById(
+                "priorityScore"
+            ).innerText;
+
+
+        const level =
+            document.getElementById(
+                "priorityLevel"
+            ).innerText;
+
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🎯 ResQ AI Rescue Priority
+
+Score: ${score}
+Level: ${level}
+
+இந்த priority decision-ல் disaster type, affected people, road access, hospital distance மற்றும் weather conditions போன்ற factors consider செய்யப்படும்.`
+
+                :
+
+`🎯 ResQ AI Rescue Priority
+
+Score: ${score}
+Level: ${level}
+
+The rescue priority considers disaster type, affected people, road access, hospital distance and weather conditions.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       LOCATION
+    ================================================= */
+
+    const locationIntent =
+        hasAny([
+
+            "current location",
+            "where am i",
+            "my location",
+
+            "location enga",
+            "location enna",
+            "location iruka",
+
+            "intha location",
+            "selected location",
+
+            "enga irukku",
+            "enga location",
+
+            "இடம்",
+            "இருப்பிடம்"
+
+        ]);
+
+
+    if(locationIntent){
+
+        if(
+            !selectedLocationName
+        ){
+
+            showCopilot(
+
+                language === "ta-IN"
+
+                    ?
+
+                    "📍 முதலில் ஒரு location search பண்ணுங்க."
+
+                    :
+
+                    "📍 First search for an emergency location.",
+
+                language
+
+            );
+
+            return;
+
+        }
+
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`📍 Selected Emergency Location
+
+${selectedLocationName}
+
+இந்த location map, weather மற்றும் hospital search-க்கு பயன்படுத்தப்படுகிறது.`
+
+                :
+
+`📍 Selected Emergency Location
+
+${selectedLocationName}
+
+This location is being used for map, weather and hospital search.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       EMERGENCY NUMBERS
+    ================================================= */
+
+    const emergencyIntent =
+        hasAny([
+
+            "emergency number",
+            "emergency numbers",
+
+            "112",
+            "108",
+            "101",
+
+            "ambulance number",
+            "police number",
+            "fire number",
+
+            "ambulance",
+            "police",
+            "fire service",
+
+            "அவசர",
+            "ஆம்புலன்ஸ்",
+            "போலீஸ்"
+
+        ]);
+
+
+    if(emergencyIntent){
+
+        const answer =
+
+`🚨 Emergency Numbers
+
+📞 112 – India Emergency
+🚑 108 – Ambulance
+🚒 101 – Fire Service
+
+Immediate danger இருந்தால் 112-க்கு call பண்ணுங்க.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       RESQ AI
+    ================================================= */
+
+    const resqIntent =
+        hasAny([
+
+            "what is resq ai",
+            "resq ai na enna",
+
+            "resq ai means",
+
+            "how resq ai works",
+            "how does resq ai work",
+
+            "resq ai epdi work",
+            "resq ai eppadi work",
+
+            "resq ai",
+            "resq"
+
+        ]);
+
+
+    if(resqIntent){
+
+        const answer =
+
+            language === "ta-IN"
+
+                ?
+
+`🤖 ResQ AI என்பது intelligent disaster-response system.
+
+Emergency location, disaster type, affected people, road access, hospital distance மற்றும் weather conditions-ஐ analyse செய்து rescue priority score உருவாக்கும்.
+
+இதன் நோக்கம் rescue teams-க்கு எந்த emergency-ஐ முதலில் handle பண்ண வேண்டும் என்பதை identify செய்ய உதவுவது.`
+
+                :
+
+`🤖 ResQ AI is an intelligent disaster-response system.
+
+It analyses emergency location, disaster type, affected people, road access, hospital distance and weather conditions to generate a rescue priority score.
+
+Its purpose is to help rescue teams identify which emergencies should be handled first.`;
+
+
+        showCopilot(
+            answer,
+            language
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       THANK YOU
+    ================================================= */
+
+    const thanksIntent =
+        hasAny([
+
+            "thank you",
+            "thanks",
+            "thank",
+
+            "nandri",
+
+            "நன்றி"
+
+        ]);
+
+
+    if(thanksIntent){
+
+        showCopilot(
+
+            language === "ta-IN"
+
+                ?
+
+                "😊 Welcome! Emergency situation-ல safety first. தேவையான help-ஐ கேளுங்க."
+
+                :
+
+                "😊 You're welcome! In an emergency, safety comes first. Ask me whenever you need guidance.",
+
+            language
+
+        );
+
+        return;
+
+    }
+
+
+    /* =================================================
+       SMART FALLBACK
+    ================================================= */
+
+    let fallback;
+
+
+    if(language === "ta-IN"){
+
+        fallback =
+
+`😊 நான் ResQ AI Emergency Assistant.
+
+நீங்க என்னிடம் கேட்கலாம்:
+
+🚨 “Ippo enna seiyanum?”
+🆘 “Eppadi rescue panradhu?”
+🧑‍🤝‍🧑 “Panic ah irukkura people ah eppadi calm panradhu?”
+🏥 “Nearby hospital enga?”
+🌤 “Current weather enna?”
+🌊 “Flood vandha enna panradhu?”
+🔥 “Fire accident na enna seiyanum?”
+🌍 “Earthquake vandha enna seiyanum?”
+🌀 “Cyclone na enna seiyanum?”
+🎯 “Why is this high priority?”
+📍 “Current location enna?”
+📞 “Emergency number enna?”
+
+Rescue, safety, weather, hospital மற்றும் emergency guidance பற்றி நான் help பண்ணுவேன்.`;
+
+    }else{
+
+        fallback =
+
+`😊 I am ResQ AI Emergency Assistant.
+
+You can ask:
+
+🚨 “What should I do now?”
+🆘 “How can I rescue people?”
+🧑‍🤝‍🧑 “How can I calm panicking people?”
+🏥 “Where is the nearest hospital?”
+🌤 “What is the current weather?”
+🌊 “What should I do during a flood?”
+🔥 “What should I do during a fire?”
+🌍 “What should I do during an earthquake?”
+🌀 “What should I do during a cyclone?”
+🎯 “Why is this high priority?”
+📍 “What is the current location?”
+📞 “What are the emergency numbers?”
+
+I can help with rescue, safety, weather, hospitals and emergency guidance.`;
+
+    }
+
+
+    showCopilot(
+        fallback,
+        language
+    );
+
+}
+
+
+/* =====================================================
+   COPILOT ANSWER
+===================================================== */
+
+function showCopilot(
+    answer,
+    language
+){
+
+    peopleCopilotResponse.innerText =
+        answer;
+
+
+    peopleCopilotInput.value =
+        "";
+
+
+    peopleSpeak(
+        answer,
+        language
+    );
+
+}
+
+
+/* =====================================================
+   SPEECH
+===================================================== */
+
+function peopleSpeak(
+    text,
+    language
+){
+
+    if(
+        !("speechSynthesis" in window)
+    ){
+
+        return;
+
+    }
+
+
+    speechSynthesis.cancel();
+
+
+    const utterance =
+        new SpeechSynthesisUtterance(
+            text
+        );
+
+
+    utterance.lang =
+        language;
+
+
+    utterance.rate =
+        .93;
+
+
+    utterance.pitch =
+        1;
+
+
+    utterance.volume =
+        1;
+
+
+    utterance.onstart =
+        function(){
+
+            peopleHologram.classList.add(
+                "speaking"
+            );
+
+        };
+
+
+    utterance.onend =
+        function(){
+
+            peopleHologram.classList.remove(
+                "speaking"
+            );
+
+        };
+
+
+    utterance.onerror =
+        function(){
+
+            peopleHologram.classList.remove(
+                "speaking"
+            );
+
+        };
+
+
+    speechSynthesis.speak(
+        utterance
+    );
+
+}
+
+
+/* =====================================================
+   VOICE INPUT
+===================================================== */
+
+peopleCopilotVoice.addEventListener(
+    "click",
+    function(){
+
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
+
+
+        if(
+            !SpeechRecognition
+        ){
+
+            peopleCopilotResponse.innerText =
+                "Voice recognition is not supported in this browser.";
+
+            return;
+
+        }
+
+
+        if(
+            peopleRecognition
+        ){
+
+            try{
+
+                peopleRecognition.stop();
+
+            }catch(error){}
+
+        }
+
+
+        peopleRecognition =
+            new SpeechRecognition();
+
+
+        peopleRecognition.lang =
+            peopleCopilotLanguage ===
+            "ta-IN"
+
+                ? "ta-IN"
+
+                : "en-IN";
+
+
+        peopleRecognition.interimResults =
+            false;
+
+
+        peopleRecognition.continuous =
+            false;
+
+
+        peopleRecognition.onstart =
+            function(){
+
+                peopleCopilotVoice.innerText =
+                    "🔴";
+
+
+                peopleCopilotResponse.innerText =
+                    "🎤 Listening...";
+
+            };
+
+
+        peopleRecognition.onresult =
+            function(event){
+
+                const text =
+                    event
+                    .results[0][0]
+                    .transcript;
+
+
+                peopleCopilotInput.value =
+                    text;
+
+
+                peopleCopilotVoice.innerText =
+                    "🎤";
+
+
+                askPeopleCopilot();
+
+            };
+
+
+        peopleRecognition.onend =
+            function(){
+
+                peopleCopilotVoice.innerText =
+                    "🎤";
+
+            };
+
+
+        peopleRecognition.onerror =
+            function(event){
+
+                console.error(
+                    "Voice error:",
+                    event.error
+                );
+
+
+                peopleCopilotVoice.innerText =
+                    "🎤";
+
+
+                peopleCopilotResponse.innerText =
+                    "I couldn't hear that. Please try again.";
+
+            };
+
+
+        try{
+
+            peopleRecognition.start();
+
+        }catch(error){
+
+            console.error(
+                "Voice start error:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   ASK BUTTON
+===================================================== */
+
+peopleCopilotAsk.addEventListener(
+    "click",
+    askPeopleCopilot
+);
+
+
+/* =====================================================
+   ENTER
+===================================================== */
+
+peopleCopilotInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "Enter"
+        ){
+
+            event.preventDefault();
+
+            askPeopleCopilot();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   HOLOGRAM CLICK
+===================================================== */
+
+peopleHologram.addEventListener(
+    "click",
+    function(){
+
+        peopleCopilotInput.focus();
+
+
+        peopleCopilotResponse.innerText =
+            "😊 கேளுங்க... rescue, hospital, weather அல்லது emergency பற்றி சொல்லுங்க.";
+
+    }
+);
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+
+    .replace(
+        /</g,
+        "&lt;"
+    )
+
+    .replace(
+        />/g,
+        "&gt;"
+    )
+
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+function formatDate(
+    value
+){
+
+    if(!value){
+
+        return "";
+
+    }
+
+
+    try{
+
+        return new Date(
+            value
+        )
+        .toLocaleString();
+
+    }catch(error){
+
+        return String(
+            value
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTO REFRESH WEATHER
+===================================================== */
+
+setInterval(
+    function(){
+
+        if(
+            latitude !== null &&
+            longitude !== null
+        ){
+
+            loadWeather();
+
+        }
+
+    },
+    10 * 60 * 1000
+);
+
+
+/* =====================================================
+   ALERT REFRESH
+===================================================== */
+
+function startAlertRefresh(){
+
+    if(alertTimer){
+
+        clearInterval(
+            alertTimer
+        );
+
+    }
+
+
+    loadAlerts();
+
+
+    alertTimer =
+        setInterval(
+            loadAlerts,
+            10000
+        );
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        initializeMap();
+
+        loadUser();
+
+        checkConnection();
+
+        startAlertRefresh();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
