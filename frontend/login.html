@@ -196,44 +196,71 @@
                 min-height: 600px;
             }
         }
+
         /* ===== LOGIN PAGE SIZE UPGRADE ===== */
 
-.login-container {
-    max-width: 1150px;
-    min-height: 680px;
-}
+        .login-container {
+            max-width: 1150px;
+            min-height: 680px;
+        }
 
-.login-panel {
-    padding: 60px 50px;
-}
+        .login-panel {
+            padding: 60px 50px;
+        }
 
-.logo {
-    font-size: 50px;
-}
+        .logo {
+            font-size: 50px;
+        }
 
-.login-panel h2 {
-    font-size: 34px;
-}
+        .login-panel h2 {
+            font-size: 34px;
+        }
 
-.role-btn {
-    padding: 18px;
-    font-size: 15px;
-}
+        .role-btn {
+            padding: 18px;
+            font-size: 15px;
+        }
 
-input {
-    padding: 17px;
-    font-size: 15px;
-}
+        input {
+            padding: 17px;
+            font-size: 15px;
+        }
 
-.login-btn {
-    padding: 18px;
-    font-size: 17px;
-}
+        .login-btn {
+            padding: 18px;
+            font-size: 17px;
+        }
 
-.feature {
-    padding: 18px 20px;
-    font-size: 16px;
-}
+        .feature {
+            padding: 18px 20px;
+            font-size: 16px;
+        }
+
+        /* ===== PASSWORD EYE ===== */
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper input {
+            padding-right: 50px;
+        }
+
+        .password-eye {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            color: #9fb1c5;
+            user-select: none;
+        }
+
+        .password-eye:hover {
+            color: white;
+        }
     </style>
 </head>
 
@@ -242,9 +269,15 @@ input {
 <div class="login-container">
 
     <div class="hero">
-        <div class="logo">🚨 ResQ <span>AI</span></div>
 
-        <h1>Rescue First.<br>Intelligent Response.</h1>
+        <div class="logo">
+            🚨 ResQ <span>AI</span>
+        </div>
+
+        <h1>
+            Rescue First.<br>
+            Intelligent Response.
+        </h1>
 
         <p>
             AI-powered disaster response platform that analyzes
@@ -253,17 +286,38 @@ input {
         </p>
 
         <div class="features">
-            <div class="feature">⚡ AI Rescue Priority</div>
-            <div class="feature">🗺 Real-Time Disaster Intelligence</div>
-            <div class="feature">🌦 Live Weather Monitoring</div>
-            <div class="feature">🏥 Emergency Medical Support</div>
+
+            <div class="feature">
+                ⚡ AI Rescue Priority
+            </div>
+
+            <div class="feature">
+                🗺 Real-Time Disaster Intelligence
+            </div>
+
+            <div class="feature">
+                🌦 Live Weather Monitoring
+            </div>
+
+            <div class="feature">
+                🏥 Emergency Medical Support
+            </div>
+
         </div>
+
     </div>
+
 
     <div class="login-panel">
 
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Access the ResQ AI platform</p>
+        <h2>
+            Welcome Back
+        </h2>
+
+        <p class="subtitle">
+            Access the ResQ AI platform
+        </p>
+
 
         <div class="role-selector">
 
@@ -272,22 +326,30 @@ input {
                 class="role-btn active"
                 id="peopleRole"
                 onclick="selectRole('PEOPLE')">
+
                 👤 People
+
             </button>
+
 
             <button
                 type="button"
                 class="role-btn"
                 id="adminRole"
                 onclick="selectRole('ADMIN')">
+
                 🚑 Admin
+
             </button>
 
         </div>
 
+
         <form id="loginForm">
 
-            <label>Email</label>
+            <label>
+                Email
+            </label>
 
             <input
                 type="email"
@@ -296,34 +358,69 @@ input {
                 required
             >
 
-            <label>Password</label>
 
-            <input
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                required
-            >
+            <label>
+                Password
+            </label>
 
-            <button class="login-btn" type="submit">
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+                <span
+                    class="password-eye"
+                    id="togglePassword"
+                    onclick="togglePasswordVisibility()">
+
+                    👁️
+
+                </span>
+
+            </div>
+
+
+            <button
+                class="login-btn"
+                type="submit">
+
                 Sign In →
+
             </button>
+
 
             <div id="loginMessage"></div>
 
         </form>
 
-    
-
     </div>
 
 </div>
 
+
 <script>
 
-const API = "http://127.0.0.1:8001";
+/* =====================================================
+   RENDER BACKEND URL
+===================================================== */
+
+const API = "https://resq-ai-7p8g.onrender.com";
+
+
+/* =====================================================
+   SELECTED ROLE
+===================================================== */
 
 let selectedRole = "PEOPLE";
+
+
+/* =====================================================
+   ROLE SELECTION
+===================================================== */
 
 function selectRole(role) {
 
@@ -331,92 +428,182 @@ function selectRole(role) {
 
     document
         .getElementById("peopleRole")
-        .classList.toggle("active", role === "PEOPLE");
+        .classList.toggle(
+            "active",
+            role === "PEOPLE"
+        );
 
     document
         .getElementById("adminRole")
-        .classList.toggle("active", role === "ADMIN");
+        .classList.toggle(
+            "active",
+            role === "ADMIN"
+        );
 }
 
 
+/* =====================================================
+   PASSWORD VISIBILITY
+===================================================== */
+
+function togglePasswordVisibility() {
+
+    const password =
+        document.getElementById("password");
+
+    const eye =
+        document.getElementById("togglePassword");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        eye.textContent = "🙈";
+
+    } else {
+
+        password.type = "password";
+
+        eye.textContent = "👁️";
+
+    }
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
 document
     .getElementById("loginForm")
-    .addEventListener("submit", async function(event) {
+    .addEventListener(
+        "submit",
+        async function(event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        const email =
-            document.getElementById("email").value.trim();
 
-        const password =
-            document.getElementById("password").value;
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
 
-        const message =
-            document.getElementById("loginMessage");
 
-        message.style.color = "#9fb2c8";
-        message.textContent = "Checking login...";
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
 
-        try {
 
-            const response = await fetch(
-                `${API}/api/login`,
-                {
-                    method: "POST",
+            const message =
+                document
+                    .getElementById("loginMessage");
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
 
-                    body: JSON.stringify({
-                        email: email,
-                        password: password,
-                        role: selectedRole
-                    })
+            message.style.color =
+                "#9fb2c8";
+
+            message.textContent =
+                "Checking login...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API}/api/login`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email,
+                                password: password,
+                                role: selectedRole
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (data.status === "success") {
+
+                    message.style.color =
+                        "#39d98a";
+
+                    message.textContent =
+                        "✓ Login successful";
+
+
+                    localStorage.setItem(
+                        "resqUser",
+                        JSON.stringify(data.user)
+                    );
+
+
+                    setTimeout(
+                        () => {
+
+                            if (
+                                data.user.role ===
+                                "PEOPLE"
+                            ) {
+
+                                window.location.href =
+                                    "people.html";
+
+                            }
+
+
+                            if (
+                                data.user.role ===
+                                "ADMIN"
+                            ) {
+
+                                window.location.href =
+                                    "command-center.html";
+
+                            }
+
+                        },
+                        500
+                    );
+
+
+                } else {
+
+                    message.style.color =
+                        "#ff6259";
+
+                    message.textContent =
+                        "✕ " +
+                        data.message;
+
                 }
-            );
 
-            const data = await response.json();
 
-            if (data.status === "success") {
+            } catch (error) {
 
-                message.style.color = "#39d98a";
-                message.textContent = "✓ Login successful";
+                console.error(error);
 
-                localStorage.setItem(
-                    "resqUser",
-                    JSON.stringify(data.user)
-                );
+                message.style.color =
+                    "#ff6259";
 
-                setTimeout(() => {
-
-                    if (data.user.role === "PEOPLE") {
-                        window.location.href = "people.html";
-                    }
-
-                    if (data.user.role === "ADMIN") {
-                        window.location.href = "index.html";
-                    }
-
-                }, 500);
-
-            } else {
-
-                message.style.color = "#ff6259";
                 message.textContent =
-                    "✕ " + data.message;
+                    "✕ Cannot connect to ResQ AI server.";
+
             }
 
-        } catch (error) {
-
-            console.error(error);
-
-            message.style.color = "#ff6259";
-            message.textContent =
-                "✕ Cannot connect to ResQ AI server.";
         }
-
-    });
+    );
 
 </script>
 
