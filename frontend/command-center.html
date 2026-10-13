@@ -8023,17 +8023,19 @@ function renderDashboard(){
 
 
     // =====================================================
-    // TODAY AFFECTED PEOPLE
+    // TOTAL AFFECTED PEOPLE (ALL REPORTS)
     // =====================================================
 
     const total =
-        todayReports.reduce(
+        reports.reduce(
             function(sum, report){
 
                 return (
                     sum +
                     Number(
-                        report.affected_people ||
+                        report.affected_people ??
+                        report.affectedPeople ??
+                        report.people_affected ??
                         0
                     )
                 );
@@ -8044,11 +8046,11 @@ function renderDashboard(){
 
 
     // =====================================================
-    // TODAY HIGH PRIORITY
+    // HIGH PRIORITY (ALL REPORTS)
     // =====================================================
 
     const high =
-        todayReports.filter(
+        reports.filter(
             function(report){
 
                 return String(
