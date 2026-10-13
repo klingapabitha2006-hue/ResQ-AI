@@ -472,138 +472,104 @@ function togglePasswordVisibility() {
 
 /* =====================================================
    LOGIN
+   Only login handling is updated.
 ===================================================== */
 
 document
     .getElementById("loginForm")
-    .addEventListener(
-        "submit",
-        async function(event) {
+    .addEventListener("submit", async function(event) {
 
-            event.preventDefault();
+        event.preventDefault();
 
+        const email = document
+            .getElementById("email")
+            .value
+            .trim();
 
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
+        const password = document
+            .getElementById("password")
+            .value;
 
+        const message = document.getElementById("loginMessage");
+        const submitButton = document.querySelector(".login-btn");
 
-            const password =
-                document
-                    .getElementById("password")
-                    .value;
+        message.style.color = "#9fb2c8";
+        message.textContent = "Checking login...";
+        submitButton.disabled = true;
+        submitButton.textContent = "Please wait...";
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 20000);
 
-            const message =
-                document
-                    .getElementById("loginMessage");
+        try {
+            const response = await fetch(`${API}/api/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    role: selectedRole
+                }),
+                signal: controller.signal
+            });
 
+            const data = await response.json().catch(() => ({}));
 
-            message.style.color =
-                "#9fb2c8";
-
-            message.textContent =
-                "Checking login...";
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API}/api/login`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                email: email,
-                                password: password,
-                                role: selectedRole
-                            })
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (data.status === "success") {
-
-                    message.style.color =
-                        "#39d98a";
-
-                    message.textContent =
-                        "✓ Login successful";
-
-
-                    localStorage.setItem(
-                        "resqUser",
-                        JSON.stringify(data.user)
-                    );
-
-
-                    setTimeout(
-                        () => {
-
-                            if (
-                                data.user.role ===
-                                "PEOPLE"
-                            ) {
-
-                                window.location.href =
-                                    "people.html";
-
-                            }
-
-
-                            if (
-                                data.user.role ===
-                                "ADMIN"
-                            ) {
-
-                                window.location.href =
-                                    "command-center.html";
-
-                            }
-
-                        },
-                        500
-                    );
-
-
-                } else {
-
-                    message.style.color =
-                        "#ff6259";
-
-                    message.textContent =
-                        "✕ " +
-                        data.message;
-
-                }
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                message.style.color =
-                    "#ff6259";
-
-                message.textContent =
-                    "✕ Cannot connect to ResQ AI server.";
-
+            if (!response.ok) {
+                throw new Error(
+                    data.detail || data.message || `Server error (${response.status})`
+                );
             }
 
+            if (data.status === "success" && data.user) {
+                message.style.color = "#39d98a";
+                message.textContent = "✓ Login successful";
+
+                localStorage.setItem("resqUser", JSON.stringify(data.user));
+
+                setTimeout(() => {
+                    if (data.user.role === "PEOPLE") {
+                        window.location.href = "people.html";
+                    } else if (data.user.role === "ADMIN") {
+                        window.location.href = "command-center.html";
+                    } else {
+                        message.style.color = "#ff6259";
+                        message.textContent = "✕ Unknown user role.";
+                        submitButton.disabled = false;
+                        submitButton.textContent = "Sign In →";
+                    }
+                }, 500);
+
+            } else {
+                message.style.color = "#ff6259";
+                message.textContent = "✕ " + (data.message || "Login failed. Check your email, password and role.");
+                submitButton.disabled = false;
+                submitButton.textContent = "Sign In →";
+            }
+
+        } catch (error) {
+            console.error("ResQ AI login error:", error);
+
+            message.style.color = "#ff6259";
+
+            if (error.name === "AbortError") {
+                message.textContent = "✕ Server took too long to respond. Please try again.";
+            } else if (error instanceof TypeError) {
+                message.textContent = "✕ Cannot connect to server. Check connection or server CORS settings.";
+            } else {
+                message.textContent = "✕ " + (error.message || "Login failed. Please try again.");
+            }
+
+            submitButton.disabled = false;
+            submitButton.textContent = "Sign In →";
+
+        } finally {
+            clearTimeout(timeoutId);
         }
-    );
+
+    });
 
 </script>
 
