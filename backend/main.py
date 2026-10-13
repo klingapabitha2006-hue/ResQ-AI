@@ -94,7 +94,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://resq-ai-1-oytq.onrender.com",
-        "https://resq-ai-7p8g.onrender.com",
+        "https://resq-ai-backend-jfhy.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
