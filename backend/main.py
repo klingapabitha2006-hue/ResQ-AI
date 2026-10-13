@@ -89,13 +89,18 @@ app = FastAPI(
 )
 
 
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://resq-ai-1-oytq.onrender.com",
+        "https://resq-ai-7p8g.onrender.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
+
 
 
 # =========================================================
