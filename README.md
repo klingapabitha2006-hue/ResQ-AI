@@ -176,7 +176,7 @@ Open the frontend using the project's configured local development server and en
 ## 🎓 Project Information
 
 - **Project Title:** ResQ-AI
-- **Project Type:** Final-Year Academic Project
+- **Project Type:** WebSiten Competition 
 - **Department:** Computer Science and Engineering
 
 ## 📄 Disclaimer
